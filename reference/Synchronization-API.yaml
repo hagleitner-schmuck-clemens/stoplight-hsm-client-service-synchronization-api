@@ -85,23 +85,6 @@ paths:
       description: Gets customers with detail information useful for synchronization with external systems. The collection is ordered by name1.
       parameters:
         - schema:
-            type: boolean
-            default: false
-          in: query
-          name: includeDeleted
-          description: 'Filters customers based on user status. If true only customers with status ''deleted'' will pass the filter, if false only customers with a status not equal to ''deleted'' will pass the filter.'
-        - schema:
-            type: boolean
-            default: true
-          in: query
-          name: includeDeactivated
-          description: 'Filters customers based on user status. If true only customers with status ''deactivated'' will pass the filter, if false only customers with a status not equal to ''deleted'' status will pass the filter.'
-        - schema:
-            type: boolean
-          in: query
-          name: includeActive
-          description: 'Filters customers based on user status. If true only customers with status ''active'' will pass the filter, if false only customers with a status not equal to ''active'' will pass the filter.'
-        - schema:
             type: string
             format: uuid
             example: 98aea202-354b-4912-81f7-364e609fe650
@@ -133,6 +116,12 @@ paths:
           description: Filters for customers based on the customer number. Note that the customer Id is only unique within all customers of the same reseller.
         - schema:
             type: string
+            pattern: '(\w+)(,\w+)*'
+          in: query
+          name: includeStatus
+          description: Filters customers based on the customer status. Only customers in one of the status will be included in the result set.        - 
+        - schema:
+            type: string
             format: uuid
           in: query
           name: resellerId
@@ -144,6 +133,7 @@ paths:
           description: Filters for customers whose name starts with the given string. String matching is done case insensitive..
         - $ref: '#/components/parameters/pageSize'
         - $ref: '#/components/parameters/pageNumber'
+
       tags:
         - Customers
     post:
