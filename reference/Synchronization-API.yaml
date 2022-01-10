@@ -118,8 +118,8 @@ paths:
             type: string
             pattern: '(\w+)(,\w+)*'
           in: query
-          name: includeStatus
-          description: Filters customers based on the customer status. Only customers in one of the status will be included in the result set.        - 
+          name: status
+          description: Filters customers based on the customer status. Only customers in one of the status will be included in the result set.        -
         - schema:
             type: string
             format: uuid
@@ -133,7 +133,6 @@ paths:
           description: Filters for customers whose name starts with the given string. String matching is done case insensitive..
         - $ref: '#/components/parameters/pageSize'
         - $ref: '#/components/parameters/pageNumber'
-
       tags:
         - Customers
     post:
@@ -682,6 +681,64 @@ paths:
       tags:
         - CustomerRelations
   '/customers/{id}/reseller-relations':
+    parameters:
+      - schema:
+          type: string
+          format: uuid
+        name: id
+        in: path
+        required: true
+        description: ID of the customer
+    get:
+      summary: '/customers/{id}/reseller-relations GET'
+      operationId: customer-reseller-relations#get
+      tags:
+        - CustomerRelations
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/customerRelation-synchronization'
+                  totalPages:
+                    $ref: '#/components/schemas/pagination-totalPages'
+                  totalItems:
+                    $ref: '#/components/schemas/pagination-totaItems'
+                  pageSize:
+                    $ref: '#/components/schemas/pagination-pageSize'
+                  currentPage:
+                    $ref: '#/components/schemas/pagination-currentPage'
+                required:
+                  - items
+                  - totalPages
+                  - totalItems
+                  - pageSize
+                  - currentPage
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/response-400-badRequest'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      description: Gets all reseller relations of this customer i.e. all relations between customers where this customer is the reseller.
+      parameters:
+        - $ref: '#/components/parameters/pageSize'
+        - $ref: '#/components/parameters/pageNumber'
+  '/customers/{id}/reseller-relations - copy':
     parameters:
       - schema:
           type: string
