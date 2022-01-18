@@ -1683,29 +1683,17 @@ components:
           example: John
           maxLength: 50
           description: Given name of the user
-        surname:
+        familyName:
           type: string
           example: Doe
           maxLength: 50
-          description: Sure name of the user.
+          description: 'Surname(s) or last name(s) of the user. Note that in some cultures, people can have multiple family names or no family name; all can be present, with the names being separated by space characters.'
         emailAddress:
           type: string
           description: The users e-mail address. This address must be unique within all non deleted users in the HsM system.
           format: email
           example: john@doe.com
           maxLength: 256
-        preferredCulture:
-          type: string
-          description: |-
-            The culture the user wants to use in interaction with the system. Given as IETF BCP 47 language tag. If not given the system will use a default invariatn culture. 
-
-            This cutlure is a default for this user, client systems might however choose to use another culture for interaction with the HsM system.
-          example: de-AT
-          maxLength: 35
-        mobilePhoneNumber:
-          type: string
-          description: 'Mobile phone number. This number will be used when the system wants to interact with that user via SMS, mobile phone numbers are not exposed to other users.'
-          example: +43 664 9161413
         status:
           type: string
           enum:
@@ -1714,6 +1702,20 @@ components:
             - deleted
             - masked
           readOnly: true
+        preferredCulture:
+          type: string
+          description: |-
+            The culture the user wants to use in interaction with the system. Given as IETF BCP 47 language tag. If not given the system will use a default invariatn culture. 
+
+            This cutlure is a default for this user, client systems might however choose to use another culture for interaction with the HsM system.
+          example: de-AT
+          maxLength: 35
+        preferredTimezone:
+          type: string
+          description: |-
+            The time zone the user wants to use in interaction with the system. String from zoneinfo time zone database. For example, Europe/Paris or America/Los_Angeles.
+
+            This time zone is a default for this user, client systems might however choose to use another time zones for interaction with the HsM system.
         createdAt:
           type: string
           format: date-time
@@ -1738,9 +1740,8 @@ components:
           description: 'If true this resource is exernally managed, the possibilities to modify the resource in HsM is then limited.'
       required:
         - id
-        - surname
+        - givenName
         - emailAddress
-        - preferredCulture
         - createdAt
         - latestUpdatedAt
         - externallyManaged
