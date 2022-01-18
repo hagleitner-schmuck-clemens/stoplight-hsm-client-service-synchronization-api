@@ -1509,11 +1509,13 @@ components:
           example: W3BX
           maxLength: 20
           description: 'Postal code of the city, town, village.'
+          minLength: 2
         countryCode:
           type: string
           maxLength: 2
           example: GB
           description: ISO 3166-1 alpha-2 code
+          minLength: 2
         customerNumber:
           type: string
           maxLength: 20
@@ -1535,11 +1537,15 @@ components:
           description: The VAT identification number of the customer
           example: +44 256 51512
           maxLength: 256
-        preferredCulture:
+        locale:
           type: string
-          description: The culture the company usually thinks in. Given as IETF BCP 47 language tag. If not given the system will use a default invariant culture.
+          description: The locale the customer usually thinks in. Given as BCP 47/RFC 5646 language tag.
           example: en-GB
           maxLength: 35
+        timeZone:
+          type: string
+          description: The time zone the customer usually thinks in. Given as IANA time zone name.
+          example: Europe/Vienna
         status:
           type: string
           enum:
@@ -1702,20 +1708,18 @@ components:
             - deleted
             - masked
           readOnly: true
-        preferredCulture:
+        locale:
           type: string
-          description: |-
-            The culture the user wants to use in interaction with the system. Given as IETF BCP 47 language tag. If not given the system will use a default invariatn culture. 
-
-            This cutlure is a default for this user, client systems might however choose to use another culture for interaction with the HsM system.
+          description: The locale the user wants to use in interaction with the system. Defined as BCP 47/RFC 5646 language tag.
           example: de-AT
           maxLength: 35
-        preferredTimezone:
+        timeZone:
           type: string
           description: |-
-            The time zone the user wants to use in interaction with the system. String from zoneinfo time zone database. For example, Europe/Paris or America/Los_Angeles.
+            The time zone the user wants to use in interaction with the system. String from zoneinfo time zone database.
 
             This time zone is a default for this user, client systems might however choose to use another time zones for interaction with the HsM system.
+          example: Europe/Vienna
         createdAt:
           type: string
           format: date-time
