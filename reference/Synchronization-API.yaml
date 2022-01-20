@@ -317,6 +317,8 @@ paths:
         '404':
           description: Not Found
       description: Deletes the customers condition relation.
+      tags:
+        - CustomerRelations
   '/customers/{id}/customer-condition-relations':
     parameters:
       - schema:
@@ -454,6 +456,8 @@ paths:
         '404':
           description: Not Found
       description: Deletes the relation relation.
+      tags:
+        - CustomerRelations
   '/customers/{id}/customer-hierarchy-relations':
     parameters:
       - schema:
@@ -589,6 +593,8 @@ paths:
         '200':
           description: OK
       description: Deletes the invoicing-relation of this customer.
+      tags:
+        - CustomerRelations
   '/customers/{id}/invoicing-relations':
     parameters:
       - schema:
