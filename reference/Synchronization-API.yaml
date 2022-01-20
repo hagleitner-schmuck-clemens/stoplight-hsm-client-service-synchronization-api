@@ -319,7 +319,7 @@ paths:
       description: Deletes the customers condition relation.
       tags:
         - CustomerRelations
-  '/customers/{id}/customer-condition-relations':
+  '/customers/{id}/condition-relations':
     parameters:
       - schema:
           type: string
@@ -329,7 +329,7 @@ paths:
         required: true
         description: ID of the customer
     get:
-      summary: '/customers/{id}/customer-condition-relations GET'
+      summary: '/customers/{id}/condition-relations GET'
       operationId: customer-condition-relations#get
       tags:
         - CustomerRelations
@@ -377,7 +377,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/pageSize'
         - $ref: '#/components/parameters/pageNumber'
-  '/customers/{id}/customer-hierarchy-relation':
+  '/customers/{id}/hierarchy-relation':
     parameters:
       - schema:
           type: string
@@ -387,7 +387,7 @@ paths:
         required: true
         description: ID of the customer
     get:
-      summary: '/customers/{id}/customer-hierarchy-relation GET'
+      summary: '/customers/{id}/hierarchy-relation GET'
       operationId: customer-customer-hierarchy-relation#get
       tags:
         - CustomerRelations
@@ -416,7 +416,7 @@ paths:
       description: 'Gets the customer-hierarchy relation of this customer (i.e. looking up the relation tree) with detail information useful for synchronization with other systems. '
       parameters: []
     put:
-      summary: '/customers/{id}/customer-hierarchy-relation PUT'
+      summary: '/customers/{id}/hierarchy-relation PUT'
       operationId: customer-customer-hierarchy-relation#put
       tags:
         - CustomerRelations
@@ -444,7 +444,7 @@ paths:
             schema:
               $ref: '#/components/schemas/customerRelation-synchronization'
     delete:
-      summary: '/customers/{id}/customer-hierarchy-relation DELETE'
+      summary: '/customers/{id}/hierarchy-relation DELETE'
       operationId: customer-customer-hierarchy-relation#delete
       responses:
         '200':
@@ -458,7 +458,7 @@ paths:
       description: Deletes the relation relation.
       tags:
         - CustomerRelations
-  '/customers/{id}/customer-hierarchy-relations':
+  '/customers/{id}/hierarchy-relations':
     parameters:
       - schema:
           type: string
@@ -468,10 +468,10 @@ paths:
         required: true
         description: ID of the customer
     get:
-      summary: '/customers/{id}/customer-hierarchy-relations GET'
+      summary: '/customers/{id}/hierarchy-relations GET'
       tags:
         - CustomerRelations
-      operationId: customer-customer-hierarchy-relations#get
+      operationId: customer-hierarchy-relations#get
       responses:
         '200':
           description: OK
