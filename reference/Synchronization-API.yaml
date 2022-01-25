@@ -1603,15 +1603,15 @@ components:
           format: date-time
           example: '2021-08-23T16:15:18.123+01:00'
           readOnly: true
+        externallyManaged:
+          type: boolean
+          description: Defines if this is a externally managed customer. I.e. the customer details are managed by another system and synchronized to HsM and should therefore not be modified in HsM.
+          readOnly: true
         resellerId:
           type: string
           format: uuid
           description: Specifies the mandatory reseller for this customer
           writeOnly: true
-        externallyManaged:
-          type: boolean
-          description: Defines if this is a externally managed customer. I.e. the customer details are managed by another system and synchronized to HsM and should therefore not be modified in HsM.
-          readOnly: true
         AllowRoleInheritanceFromReseller:
           type: boolean
           description: Defines if roles applicable to the customer's reseller and marked for propagation down the reseller relation tree shall be actually inherited by this customer.
@@ -1629,6 +1629,12 @@ components:
           format: date-time
           description: Date time offset when this customer record was created
           readOnly: true
+        customerCapabilityLevel:
+          type: integer
+          minimum: 0
+          maximum: 10
+          default: 10
+          description: The capability level of this customer.
         synchronizationId:
           type: string
           format: uuid
@@ -1641,8 +1647,8 @@ components:
         - name1
         - countryCode
         - emailAddress
-        - resellerId
         - externallyManaged
+        - resellerId
     customerRelation-synchronization:
       type: object
       title: ''
