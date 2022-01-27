@@ -10,6 +10,8 @@
 * 2022-01-10 (Version 1.0.0-beta.6): Split stoplight models for synchronization and Standard API
 * 2022-01-10 (Version 1.0.0-beta.7): Customer status filter changed
 * 2022-01-19 (Version 1.0.0-beta.8): Fixed naming in customer relations, removed unused models, fixed timezone and locale naming, update user-model (OpenID conforance)
+* 2022-01-27 (Version 1.0.0-beta.9): Fixed tagging, added customer capability level, fixed request body for cutomer relation endpoints, added delete operations to customer relation endpoints.
+
 
 
 ### Roadmap

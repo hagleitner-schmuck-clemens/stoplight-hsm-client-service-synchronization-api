@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Synchronization API
-  version: 1.0.0-beta.8
+  version: 1.0.0-beta.9
   summary: HsM Client Service API for business data synchronization
   description: |-
     ## General description
@@ -303,8 +303,23 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/user-synchronization'
-  '/customers/{id}/customer-condition-relations':
+              $ref: '#/components/schemas/customerRelation-synchronization'
+    delete:
+      summary: '/customers/{id}/condition-relation DELETE'
+      operationId: customer-condition-relation#delete
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+      description: Deletes the customers condition relation.
+      tags:
+        - CustomerRelations
+  '/customers/{id}/condition-relations':
     parameters:
       - schema:
           type: string
@@ -314,7 +329,7 @@ paths:
         required: true
         description: ID of the customer
     get:
-      summary: '/customers/{id}/customer-condition-relations GET'
+      summary: '/customers/{id}/condition-relations GET'
       operationId: customer-condition-relations#get
       tags:
         - CustomerRelations
@@ -362,7 +377,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/pageSize'
         - $ref: '#/components/parameters/pageNumber'
-  '/customers/{id}/customer-hierarchy-relation':
+  '/customers/{id}/hierarchy-relation':
     parameters:
       - schema:
           type: string
@@ -372,7 +387,7 @@ paths:
         required: true
         description: ID of the customer
     get:
-      summary: '/customers/{id}/customer-hierarchy-relation GET'
+      summary: '/customers/{id}/hierarchy-relation GET'
       operationId: customer-customer-hierarchy-relation#get
       tags:
         - CustomerRelations
@@ -401,7 +416,7 @@ paths:
       description: 'Gets the customer-hierarchy relation of this customer (i.e. looking up the relation tree) with detail information useful for synchronization with other systems. '
       parameters: []
     put:
-      summary: '/customers/{id}/customer-hierarchy-relation PUT'
+      summary: '/customers/{id}/hierarchy-relation PUT'
       operationId: customer-customer-hierarchy-relation#put
       tags:
         - CustomerRelations
@@ -428,7 +443,22 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/customerRelation-synchronization'
-  '/customers/{id}/customer-hierarchy-relations':
+    delete:
+      summary: '/customers/{id}/hierarchy-relation DELETE'
+      operationId: customer-customer-hierarchy-relation#delete
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+      description: Deletes the relation relation.
+      tags:
+        - CustomerRelations
+  '/customers/{id}/hierarchy-relations':
     parameters:
       - schema:
           type: string
@@ -438,10 +468,10 @@ paths:
         required: true
         description: ID of the customer
     get:
-      summary: '/customers/{id}/customer-hierarchy-relations GET'
+      summary: '/customers/{id}/hierarchy-relations GET'
       tags:
         - CustomerRelations
-      operationId: customer-customer-hierarchy-relations#get
+      operationId: customer-hierarchy-relations#get
       responses:
         '200':
           description: OK
@@ -556,6 +586,15 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/user-synchronization'
+    delete:
+      summary: '/customers/{id}/invoicing-relation DELETE'
+      operationId: delete-customers-id-invoicing-relation
+      responses:
+        '200':
+          description: OK
+      description: Deletes the invoicing-relation of this customer.
+      tags:
+        - CustomerRelations
   '/customers/{id}/invoicing-relations':
     parameters:
       - schema:
@@ -677,7 +716,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/user-synchronization'
+              $ref: '#/components/schemas/customerRelation-synchronization'
       tags:
         - CustomerRelations
   '/customers/{id}/reseller-relations':
@@ -1564,15 +1603,15 @@ components:
           format: date-time
           example: '2021-08-23T16:15:18.123+01:00'
           readOnly: true
+        externallyManaged:
+          type: boolean
+          description: Defines if this is a externally managed customer. I.e. the customer details are managed by another system and synchronized to HsM and should therefore not be modified in HsM.
+          readOnly: true
         resellerId:
           type: string
           format: uuid
           description: Specifies the mandatory reseller for this customer
           writeOnly: true
-        externallyManaged:
-          type: boolean
-          description: Defines if this is a externally managed customer. I.e. the customer details are managed by another system and synchronized to HsM and should therefore not be modified in HsM.
-          readOnly: true
         AllowRoleInheritanceFromReseller:
           type: boolean
           description: Defines if roles applicable to the customer's reseller and marked for propagation down the reseller relation tree shall be actually inherited by this customer.
@@ -1590,6 +1629,12 @@ components:
           format: date-time
           description: Date time offset when this customer record was created
           readOnly: true
+        customerCapabilityLevel:
+          type: integer
+          minimum: 0
+          maximum: 10
+          default: 10
+          description: The capability level of this customer.
         synchronizationId:
           type: string
           format: uuid
@@ -1602,8 +1647,8 @@ components:
         - name1
         - countryCode
         - emailAddress
-        - resellerId
         - externallyManaged
+        - resellerId
     customerRelation-synchronization:
       type: object
       title: ''
