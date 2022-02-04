@@ -51,7 +51,7 @@ paths:
                   items:
                     type: array
                     items:
-                      $ref: '#/components/schemas/customer-synchronization'
+                      $ref: '#/components/schemas/customer'
                   totalPages:
                     $ref: '#/components/schemas/pagination-totalPages'
                   totalItems:
@@ -162,7 +162,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/customer-synchronization'
+              $ref: '#/components/schemas/customer'
       tags:
         - Customers
   '/customers/{id}':
@@ -190,7 +190,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/customer-synchronization'
+                $ref: '#/components/schemas/customer'
         '400':
           description: Bad Request
           content:
@@ -234,7 +234,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/customer-synchronization'
+              $ref: '#/components/schemas/customer'
   '/customers/{id}/condition-relation':
     parameters:
       - schema:
@@ -254,7 +254,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/customerRelation-synchronization'
+                $ref: '#/components/schemas/customerRelation'
         '400':
           description: Bad Request
           content:
@@ -303,7 +303,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/customerRelation-synchronization'
+              $ref: '#/components/schemas/customerRelation'
     delete:
       summary: '/customers/{id}/condition-relation DELETE'
       operationId: customer-condition-relation#delete
@@ -344,7 +344,7 @@ paths:
                   items:
                     type: array
                     items:
-                      $ref: '#/components/schemas/customerRelation-synchronization'
+                      $ref: '#/components/schemas/customerRelation'
                   totalPages:
                     $ref: '#/components/schemas/pagination-totalPages'
                   totalItems:
@@ -398,7 +398,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/customerRelation-synchronization'
+                $ref: '#/components/schemas/customerRelation'
         '400':
           description: Bad Request
           content:
@@ -442,7 +442,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/customerRelation-synchronization'
+              $ref: '#/components/schemas/customerRelation'
     delete:
       summary: '/customers/{id}/hierarchy-relation DELETE'
       operationId: customer-customer-hierarchy-relation#delete
@@ -483,7 +483,7 @@ paths:
                   items:
                     type: array
                     items:
-                      $ref: '#/components/schemas/customerRelation-synchronization'
+                      $ref: '#/components/schemas/customerRelation'
                   totalPages:
                     $ref: '#/components/schemas/pagination-totalPages'
                   totalItems:
@@ -537,7 +537,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/customerRelation-synchronization'
+                $ref: '#/components/schemas/customerRelation'
         '400':
           description: Bad Request
           content:
@@ -585,7 +585,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/user-synchronization'
+              $ref: '#/components/schemas/user'
     delete:
       summary: '/customers/{id}/invoicing-relation DELETE'
       operationId: delete-customers-id-invoicing-relation
@@ -620,7 +620,7 @@ paths:
                   items:
                     type: array
                     items:
-                      $ref: '#/components/schemas/customerRelation-synchronization'
+                      $ref: '#/components/schemas/customerRelation'
                   totalPages:
                     $ref: '#/components/schemas/pagination-totalPages'
                   totalItems:
@@ -672,7 +672,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/customerRelation-synchronization'
+                $ref: '#/components/schemas/customerRelation'
         '400':
           description: Bad Request
           content:
@@ -716,7 +716,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/customerRelation-synchronization'
+              $ref: '#/components/schemas/customerRelation'
       tags:
         - CustomerRelations
   '/customers/{id}/reseller-relations':
@@ -744,7 +744,7 @@ paths:
                   items:
                     type: array
                     items:
-                      $ref: '#/components/schemas/customerRelation-synchronization'
+                      $ref: '#/components/schemas/customerRelation'
                   totalPages:
                     $ref: '#/components/schemas/pagination-totalPages'
                   totalItems:
@@ -959,7 +959,7 @@ paths:
                   items:
                     type: array
                     items:
-                      $ref: '#/components/schemas/customerRelation-synchronization-list'
+                      $ref: '#/components/schemas/customerRelation-list'
                   totalPages:
                     $ref: '#/components/schemas/pagination-totalPages'
                   totalItems:
@@ -1220,7 +1220,7 @@ paths:
                   items:
                     type: array
                     items:
-                      $ref: '#/components/schemas/user-synchronization'
+                      $ref: '#/components/schemas/user'
                   totalPages:
                     $ref: '#/components/schemas/pagination-totalPages'
                   totalItems:
@@ -1321,7 +1321,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/user-synchronization'
+              $ref: '#/components/schemas/user'
   '/users/{id}':
     parameters:
       - name: id
@@ -1342,7 +1342,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/user-synchronization'
+                $ref: '#/components/schemas/user'
         '400':
           description: Bad Request
           content:
@@ -1385,7 +1385,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/user-synchronization'
+              $ref: '#/components/schemas/user'
     patch:
       summary: '/users/{id} PATCH'
       operationId: user#patch
@@ -1412,8 +1412,8 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/user-synchronization'
-      description: Performs a partial update on a user-synchronization resource.
+              $ref: '#/components/schemas/user'
+      description: Performs a partial update on a user resource.
   '/users/{id}/status':
     parameters:
       - schema:
@@ -1494,7 +1494,7 @@ paths:
                 - masked
 components:
   schemas:
-    customer-synchronization:
+    customer:
       type: object
       title: ''
       description: Describes a customer of the HsM system together with information relevant for synchronization with other business systems.
@@ -1649,7 +1649,7 @@ components:
         - emailAddress
         - externallyManaged
         - resellerId
-    customerRelation-synchronization:
+    customerRelation:
       type: object
       title: ''
       description: 'Represents a customer relation between two customers in HsM, including synchronization data.'
@@ -1682,7 +1682,7 @@ components:
         - id
         - customerId
         - externallyManaged
-    customerRelation-synchronization-list:
+    customerRelation-list:
       type: object
       title: ''
       description: 'Represents a customer relation between two customers in HsM, including synchronization data.'
@@ -1719,7 +1719,7 @@ components:
         - parentId
         - childId
         - externallyManaged
-    user-synchronization:
+    user:
       type: object
       title: ''
       description: 'Represents a user of the HsM system including synchronization data. '
