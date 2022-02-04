@@ -1045,7 +1045,7 @@ paths:
       operationId: role-assignments#get
       description: Gets a role-assignemnt
       parameters: []
-      x-internal: true
+      x-internal: false
   /system-role-assignments:
     parameters: []
     get:
@@ -1787,6 +1787,10 @@ components:
           type: boolean
           default: false
           description: 'If true this resource is exernally managed, the possibilities to modify the resource in HsM is then limited.'
+        userCapabilityLevel:
+          type: integer
+          minimum: 0
+          maximum: 10
       required:
         - id
         - givenName
