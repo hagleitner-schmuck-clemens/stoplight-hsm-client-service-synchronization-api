@@ -943,12 +943,12 @@ paths:
             type: string
           in: query
           name: childCustomerId
-          description: 'Filters for relations where the child is the customer with the given ID. '
+          description: 'Filters for relations where the child is the customer with the given ID. , Can be the internal HsM integer Id or a synchronization ID.  '
         - schema:
             type: string
           in: query
           name: parentCustomerId
-          description: Filters for relations where the parent is the customer with the given ID.
+          description: 'Filters for relations where the parent is the customer with the given ID.. Can be the internal HsM integer Id or a synchronization ID.  '
         - schema:
             type: boolean
           in: query
@@ -1368,18 +1368,13 @@ paths:
           description: Forbidden
         '404':
           description: Not Found
-      description: |-
-        Gets a the status of a specific user.
-        Active: The user can interact with the system.
-        Inactive: The user can (temporarily) not interact with the system but can be reactivatd
-        Deleted: The user was deleted and cannot be re-activated. The e-mail address of deleted users does not have to be unique within the system.
-        Masked: The user was deleted and finally the data of the user was masked to support GPDR requirements. Masked users cannot be reactivated. All personal infomrmation is removed.
+      description: Gets the life-cycle status of a user.
       tags:
         - Users
     put:
       summary: '/users/{id}/status PUT'
       operationId: user-status#put
-      description: Updates a user's status
+      description: Sets the life-cycle status of a user.
       responses:
         '200':
           description: OK
@@ -1648,13 +1643,13 @@ components:
           readOnly: true
         parentId:
           format: uuid
-          type: number
+          type: integer
         parentSynchronizationId:
           type: string
           format: uuid
         childId:
           format: uuid
-          type: number
+          type: integer
         childSynchronizationId:
           type: string
           format: uuid
