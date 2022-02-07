@@ -90,7 +90,7 @@ paths:
             example: 98aea202-354b-4912-81f7-364e609fe650
           in: query
           name: synchronizationId
-          description: Filters for a customer with the given synchronization Id. Only a customer with an exact match will pass the filter.
+          description: Filters for a customer with the given synchronization ID. Only a customer with an exact match will pass the filter.
         - schema:
             type: string
             example: '2021-11-12T21:15:13.1234+01:00'
@@ -167,13 +167,7 @@ paths:
         - Customers
   '/customers/{id}':
     parameters:
-      - schema:
-          type: string
-          format: uuid
-        name: id
-        in: path
-        required: true
-        description: ID of the customer
+      - $ref: '#/components/parameters/id'
     get:
       summary: '/customers/{id} GET'
       operationId: customer#get
@@ -237,13 +231,7 @@ paths:
               $ref: '#/components/schemas/customer'
   '/customers/{id}/condition-relation':
     parameters:
-      - schema:
-          type: string
-          format: uuid
-        name: id
-        in: path
-        required: true
-        description: ID of the customer
+      - $ref: '#/components/parameters/id'
     get:
       summary: '/customers/{id}/condition-relation GET'
       operationId: customer-condition-relation#get
@@ -321,13 +309,7 @@ paths:
         - CustomerRelations
   '/customers/{id}/condition-relations':
     parameters:
-      - schema:
-          type: string
-          format: uuid
-        name: id
-        in: path
-        required: true
-        description: ID of the customer
+      - $ref: '#/components/parameters/id'
     get:
       summary: '/customers/{id}/condition-relations GET'
       operationId: customer-condition-relations#get
@@ -379,13 +361,7 @@ paths:
         - $ref: '#/components/parameters/pageNumber'
   '/customers/{id}/hierarchy-relation':
     parameters:
-      - schema:
-          type: string
-          format: uuid
-        name: id
-        in: path
-        required: true
-        description: ID of the customer
+      - $ref: '#/components/parameters/id'
     get:
       summary: '/customers/{id}/hierarchy-relation GET'
       operationId: customer-customer-hierarchy-relation#get
@@ -460,13 +436,7 @@ paths:
         - CustomerRelations
   '/customers/{id}/hierarchy-relations':
     parameters:
-      - schema:
-          type: string
-          format: uuid
-        name: id
-        in: path
-        required: true
-        description: ID of the customer
+      - $ref: '#/components/parameters/id'
     get:
       summary: '/customers/{id}/hierarchy-relations GET'
       tags:
@@ -518,13 +488,7 @@ paths:
         - $ref: '#/components/parameters/pageNumber'
   '/customers/{id}/invoicing-relation':
     parameters:
-      - schema:
-          type: string
-          format: uuid
-        name: id
-        in: path
-        description: ID of the customer
-        required: true
+      - $ref: '#/components/parameters/id'
     get:
       summary: '/customers/{id}/invoicing-relation GET'
       operationId: customer-invoicing-relation#get
@@ -597,13 +561,7 @@ paths:
         - CustomerRelations
   '/customers/{id}/invoicing-relations':
     parameters:
-      - schema:
-          type: string
-          format: uuid
-        name: id
-        in: path
-        required: true
-        description: ID of the customer
+      - $ref: '#/components/parameters/id'
     get:
       summary: '/customers/{id}/invoicing-relations GET'
       operationId: customer-invoicing-relations#get
@@ -655,13 +613,7 @@ paths:
         - $ref: '#/components/parameters/pageNumber'
   '/customers/{id}/reseller-relation':
     parameters:
-      - schema:
-          type: string
-          format: uuid
-        name: id
-        in: path
-        required: true
-        description: ID of the customer
+      - $ref: '#/components/parameters/id'
     get:
       summary: '/customers/{id}/reseller-relation GET'
       operationId: customer-reseller-relation#get
@@ -721,13 +673,7 @@ paths:
         - CustomerRelations
   '/customers/{id}/reseller-relations':
     parameters:
-      - schema:
-          type: string
-          format: uuid
-        name: id
-        in: path
-        required: true
-        description: ID of the customer
+      - $ref: '#/components/parameters/id'
     get:
       summary: '/customers/{id}/reseller-relations GET'
       operationId: customer-reseller-relations#get
@@ -779,12 +725,7 @@ paths:
         - $ref: '#/components/parameters/pageNumber'
   '/customers/{id}/role-assignments':
     parameters:
-      - schema:
-          type: string
-        name: id
-        in: path
-        required: true
-        description: ID of the customer
+      - $ref: '#/components/parameters/id'
     get:
       summary: '/customers/{id}/role-assignments GET'
       responses:
@@ -875,13 +816,7 @@ paths:
         - RoleAssignments
   '/customers/{id}/status':
     parameters:
-      - schema:
-          type: string
-          format: uuid
-        name: id
-        in: path
-        required: true
-        description: ID of the customer
+      - $ref: '#/components/parameters/id'
     get:
       summary: '/customers/{id}/status GET'
       tags:
@@ -1025,12 +960,7 @@ paths:
         - RoleAssignments
   '/role-assignments/{id}':
     parameters:
-      - schema:
-          type: string
-        name: id
-        in: path
-        required: true
-        description: ID of the customer
+      - $ref: '#/components/parameters/id'
     get:
       summary: '/role-assignments/{id}'
       tags:
@@ -1134,13 +1064,7 @@ paths:
         - RoleAssignments
   '/system/role-assignments/{id}':
     parameters:
-      - schema:
-          type: string
-          format: uuid
-        name: id
-        in: path
-        required: true
-        description: ID of the customer
+      - $ref: '#/components/parameters/id'
     get:
       summary: '/system/role-assignments/{id} GET'
       responses:
@@ -1324,13 +1248,7 @@ paths:
               $ref: '#/components/schemas/user'
   '/users/{id}':
     parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
-        description: UUID of the collection element
+      - $ref: '#/components/parameters/id'
     get:
       summary: '/users/{id} GET'
       operationId: user#get
@@ -1416,11 +1334,7 @@ paths:
       description: Performs a partial update on a user resource.
   '/users/{id}/status':
     parameters:
-      - schema:
-          type: string
-        name: id
-        in: path
-        required: true
+      - $ref: '#/components/parameters/id'
     get:
       summary: '/users/{id}/status GET'
       operationId: user-status#get
@@ -2152,3 +2066,11 @@ components:
         minimum: 1
         example: 200
       description: 'Pagination, 1-based number of the page to return.'
+    id:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int32
+      description: ID of the resource in HsM
