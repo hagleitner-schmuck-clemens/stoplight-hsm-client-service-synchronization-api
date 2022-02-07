@@ -1,12 +1,12 @@
 openapi: 3.1.0
 info:
   title: Synchronization API
-  version: 1.0.0-beta.9
+  version: 1.0.0-beta.10
   summary: HsM Client Service API for business data synchronization
   description: |-
     ## General description
 
-    This API is used to synchronize business data resources with external systems. It uses service authentication with tokens provided by AD. Once authenticated a process accessing this API is authorized to access any endpoint without restrictions.
+    This API is used to synchronize business data resources with external systems. Once authenticated a process using this API is authorized to access any endpoint without restrictions.
 
     The Standard API is a client agnostic API to the HsM Client Service.
 
@@ -1541,7 +1541,7 @@ components:
           readOnly: true
         customerCapabilityLevel:
           type: integer
-          minimum: 0
+          minimum: 1
           maximum: 10
           default: 10
           description: The capability level of this customer.
@@ -1741,7 +1741,7 @@ components:
           description: 'If true this resource is exernally managed, the possibilities to modify the resource in HsM is then limited.'
         userCapabilityLevel:
           type: integer
-          minimum: 0
+          minimum: 1
           maximum: 10
       required:
         - id
@@ -2002,3 +2002,4 @@ components:
       schema:
         type: string
       description: 'ID of the, can be the internal HsM integer Id or a synchronization ID.'
+  responses: {}
