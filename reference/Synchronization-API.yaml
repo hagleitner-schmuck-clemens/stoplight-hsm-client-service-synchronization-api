@@ -2085,4 +2085,4 @@ components:
       schema:
         type: integer
         format: int32
-      description: ID of the resource in HsM
+      description: ID of the resource in HsM. Can be an HsM integer Id or a synchronization ID.
