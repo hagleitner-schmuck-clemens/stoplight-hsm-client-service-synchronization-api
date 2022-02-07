@@ -1069,13 +1069,7 @@ paths:
         - RoleAssignments
   '/system-role-assignments/{id}':
     parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: integer
-          format: int32
-        description: ID of the resource in HsM
+      - $ref: '#/components/parameters/id'
     get:
       summary: '/system-role-assignments/{id} GET'
       responses:
@@ -1425,9 +1419,9 @@ components:
       description: Describes a customer of the HsM system together with information relevant for synchronization with other business systems.
       properties:
         id:
-          format: uuid
-          description: ID of the user within the HsM system
           type: integer
+          format: int32
+          description: ID of the user within the HsM system
           readOnly: true
         code:
           type: string
@@ -1930,9 +1924,8 @@ components:
       description: Represents a role assignment from a users perspective.
       properties:
         id:
-          type: integer
-          description: ID of the role assignment
-          format: int32
+          type: string
+          description: 'ID of the role assignment. Can be an internal HsM integer Id, or a synchronization ID.'
           readOnly: true
         assignedAt:
           type: string
