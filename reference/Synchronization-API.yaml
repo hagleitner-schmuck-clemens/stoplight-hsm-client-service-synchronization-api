@@ -112,10 +112,14 @@ paths:
             type: string
           in: query
           name: customerNumber
-          description: Filters for customers based on the customer number. Note that the customer Id is only unique within all customers of the same reseller.
+          description: Filters for customers based on the customer number. Note that the customer number is only unique within all customers of the same reseller.
         - schema:
             type: string
             pattern: '(\w+)(,\w+)*'
+            enum:
+              - active
+              - inactive
+              - deleted
           in: query
           name: status
           description: Filters customers based on the customer status. Only customers in one of the status will be included in the result set.        -
@@ -959,15 +963,9 @@ paths:
         - RoleAssignments
   '/customer-role-assignments/{id}':
     parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: integer
-          format: int32
-        description: ID of the resource in HsM
+      - $ref: '#/components/parameters/id'
     get:
-      summary: '/role-assignments/{id}'
+      summary: '/customer-role-assignments/{id}'
       tags:
         - RoleAssignments
       responses:
@@ -1098,7 +1096,7 @@ paths:
             type: string
             format: uuid
           in: query
-          name: Id
+          name: id
           description: ID of the role assignment
       x-internal: false
       tags:
@@ -1473,7 +1471,7 @@ components:
           type: string
           maxLength: 20
           example: 21-0789-B
-          description: The customer number used by the reseller to uniquely identify this customer
+          description: The customer number used by the reseller to uniquely identify this customer.
         emailAddress:
           type: string
           description: The companies main e-mail address
