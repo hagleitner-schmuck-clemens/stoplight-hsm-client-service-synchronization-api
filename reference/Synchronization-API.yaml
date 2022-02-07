@@ -791,7 +791,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/customerRoleAssignment-user'
+                $ref: '#/components/schemas/customerRoleAssignment-customer-synchronization'
         '400':
           description: Bad Request
           content:
@@ -958,9 +958,15 @@ paths:
       x-internal: false
       tags:
         - RoleAssignments
-  '/role-assignments/{id}':
+  '/customer-role-assignments/{id}':
     parameters:
-      - $ref: '#/components/parameters/id'
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+        description: ID of the resource in HsM
     get:
       summary: '/role-assignments/{id}'
       tags:
@@ -971,9 +977,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/customerRoleAssignment-customer'
+                $ref: '#/components/schemas/customerRoleAssignment-customer-synchronization'
       operationId: role-assignments#get
-      description: Gets a role-assignemnt
+      description: Gets a role-assignemnt of a user on a customer.
       parameters: []
       x-internal: false
   /system-role-assignments:
@@ -1062,11 +1068,17 @@ paths:
       description: Creates a new system role assignment
       tags:
         - RoleAssignments
-  '/system/role-assignments/{id}':
+  '/system-role-assignments/{id}':
     parameters:
-      - $ref: '#/components/parameters/id'
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+        description: ID of the resource in HsM
     get:
-      summary: '/system/role-assignments/{id} GET'
+      summary: '/system-role-assignments/{id} GET'
       responses:
         '200':
           description: OK
