@@ -128,7 +128,7 @@ paths:
             format: uuid
           in: query
           name: resellerId
-          description: Filters for sub customer of the given reseller.
+          description: Filters for sub-customers of the given reseller.
         - schema:
             type: string
           in: query
@@ -1091,13 +1091,7 @@ paths:
           description: Not Found
       operationId: system-role-assignment#get
       description: Gets a role assignement between users and the system.
-      parameters:
-        - schema:
-            type: string
-            format: uuid
-          in: query
-          name: id
-          description: ID of the role assignment
+      parameters: []
       x-internal: false
       tags:
         - RoleAssignments
@@ -1902,6 +1896,7 @@ components:
           default: false
         applicableToRelatedCustomersOnly:
           type: boolean
+          default: false
       required:
         - id
         - userId
