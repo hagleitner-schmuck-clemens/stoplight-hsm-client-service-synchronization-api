@@ -2008,5 +2008,5 @@ components:
       in: path
       required: true
       schema:
-        type: integer
+        type: string
       description: 'ID of the, can be the internal HsM integer Id or a synchronization ID.'
