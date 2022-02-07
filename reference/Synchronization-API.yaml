@@ -17,6 +17,9 @@ info:
 
     ### Responses
     This specification shows only the most relevant responses. Clients have to still handle all other possible HTTP Response codes.
+
+    ### Id and synchronizationId
+    As this API covers the special use case of data synchronization, resources can be identified with either their internal HsM Id (an Int32) or a synchronizationId (a UUID). The service will try to parse the ID into one of the two types and will identify the resource accordingly.
   contact:
     name: Hagleitner Hygiene Internaltional GmbH
     url: 'http://www.hagleitner.com/'
@@ -24,15 +27,11 @@ info:
 servers:
   - url: 'http://localhost:3000'
 tags:
-  - name: Branding
   - name: Customers
   - name: CustomerRelations
   - name: RoleAssignments
-  - name: SelfRegistration
   - name: System
   - name: Users
-  - name: CustomerFavorites
-  - name: Locations
 paths:
   /customers:
     parameters: []
@@ -291,7 +290,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/customerRelation'
+              $ref: '#/components/schemas/customerRelation-put'
     delete:
       summary: '/customers/{id}/condition-relation DELETE'
       operationId: customer-condition-relation#delete
@@ -418,7 +417,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/customerRelation'
+              $ref: '#/components/schemas/customerRelation-put'
     delete:
       summary: '/customers/{id}/hierarchy-relation DELETE'
       operationId: customer-customer-hierarchy-relation#delete
@@ -549,7 +548,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/user'
+              $ref: '#/components/schemas/customerRelation-put'
     delete:
       summary: '/customers/{id}/invoicing-relation DELETE'
       operationId: delete-customers-id-invoicing-relation
@@ -668,7 +667,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/customerRelation'
+              $ref: '#/components/schemas/customerRelation-put'
       tags:
         - CustomerRelations
   '/customers/{id}/reseller-relations':
@@ -739,7 +738,7 @@ paths:
                   items:
                     type: array
                     items:
-                      $ref: '#/components/schemas/customerRoleAssignment-customer-synchronization'
+                      $ref: '#/components/schemas/customerRoleAssignment'
                   totalPages:
                     $ref: '#/components/schemas/pagination-totalPages'
                   totalItems:
@@ -791,7 +790,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/customerRoleAssignment-customer-synchronization'
+                $ref: '#/components/schemas/customerRoleAssignment'
         '400':
           description: Bad Request
           content:
@@ -811,7 +810,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/customerRoleAssignment-customer'
+              $ref: '#/components/schemas/customerRoleAssignment'
       tags:
         - RoleAssignments
   '/customers/{id}/status':
@@ -977,7 +976,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/customerRoleAssignment-customer-synchronization'
+                $ref: '#/components/schemas/customerRoleAssignment'
       operationId: role-assignments#get
       description: Gets a role-assignemnt of a user on a customer.
       parameters: []
@@ -997,7 +996,7 @@ paths:
                   items:
                     type: array
                     items:
-                      $ref: '#/components/schemas/systemRoleAssignment-synchronization'
+                      $ref: '#/components/schemas/systemRoleAssignment'
                   totalPages:
                     $ref: '#/components/schemas/pagination-totalPages'
                   totalItems:
@@ -1064,7 +1063,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/systemRoleAssignment-synchronization'
+              $ref: '#/components/schemas/systemRoleAssignment'
       description: Creates a new system role assignment
       tags:
         - RoleAssignments
@@ -1085,7 +1084,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/systemRoleAssignment-synchronization'
+                $ref: '#/components/schemas/systemRoleAssignment'
         '400':
           description: Bad Request
           content:
@@ -1585,6 +1584,9 @@ components:
           format: uuid
           readOnly: true
         customerId:
+          type: integer
+          format: int32
+        customerSynchronizationId:
           type: string
           format: uuid
         lastUpdatedAt:
@@ -1598,6 +1600,39 @@ components:
         synchronizationId:
           type: string
           format: uuid
+        synchronizationInformation:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+        - id
+        - customerId
+        - externallyManaged
+    customerRelation-put:
+      type: object
+      title: ''
+      description: 'Represents a customer relation between two customers in HsM, including synchronization data.'
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        customerId:
+          type: string
+          description: 'ID of the parent customer. Can be an internal HsM integer Id, or a synchronization ID.'
+        lastUpdatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+        synchronizationId:
+          type: string
+          format: uuid
+        externallyManaged:
+          type: boolean
+          default: false
+          description: 'If true this resource is exernally managed, the possibilities to modify the resource in HsM is then limited.'
         synchronizationInformation:
           type: string
         createdAt:
@@ -1640,6 +1675,12 @@ components:
           type: string
           format: date-time
           readOnly: true
+        parentSynchronizationId:
+          type: string
+          format: uuid
+        childSynchronizationId:
+          type: string
+          format: uuid
       required:
         - id
         - parentId
@@ -1830,57 +1871,7 @@ components:
     response-403-forbidden:
       type: object
       title: ''
-    customerRoleAssignment-customer:
-      title: ''
-      type: object
-      examples:
-        - id: 497f6eca-6276-4993-bfeb-53cbbbba6f08
-          userId: 2c4a230c-5085-4924-a3e1-25fb4fc5965b
-          assignedAt: '2019-08-24T14:15:22Z'
-          roleId: 7382d58e-652a-4905-b7c9-bcca1e0e5391
-          userDisplayName: 'Doe, John'
-          roleName: Customer Administrator
-      description: Represents a customer role assignment from a customers perspective.
-      properties:
-        id:
-          type: string
-          description: ID of the role assignment
-          format: uuid
-          readOnly: true
-        userId:
-          type: string
-          format: uuid
-          description: ID of user who is assigned a role
-        assignedAt:
-          type: string
-          description: Date when the role was assigned
-          format: date-time
-          readOnly: true
-        roleId:
-          type: string
-          description: ID of the assigned role.
-          format: uuid
-        userDisplayName:
-          type: string
-          description: Display name of the user.
-          readOnly: true
-        roleName:
-          type: string
-          description: Name of the assigned role
-          readOnly: true
-        applicableToRelatedCustomersOnly:
-          type: boolean
-        externallyManaged:
-          type: boolean
-      required:
-        - id
-        - userId
-        - assignedAt
-        - roleId
-        - userDisplayName
-        - roleName
-        - externallyManaged
-    customerRoleAssignment-customer-synchronization:
+    customerRoleAssignment:
       title: ''
       type: object
       examples:
@@ -1936,56 +1927,7 @@ components:
         - userDisplayName
         - roleName
         - externallyManaged
-    customerRoleAssignment-user:
-      title: ''
-      type: object
-      examples:
-        - id: 497f6eca-6276-4993-bfeb-53cbbbba6f08
-          userId: 2c4a230c-5085-4924-a3e1-25fb4fc5965b
-          assignedAt: '2019-08-24T14:15:22Z'
-          roleId: 7382d58e-652a-4905-b7c9-bcca1e0e5391
-          userDisplayName: 'Doe, John'
-          roleName: Customer Administrator
-      description: Represents a customer role assignment from a users perspective.
-      properties:
-        id:
-          type: string
-          description: ID of the role assignment
-          format: uuid
-          readOnly: true
-        customerId:
-          type: string
-          format: uuid
-          description: ID of user who is assigned a role
-        assignedAt:
-          type: string
-          description: Date when the role was assigned
-          format: date-time
-          readOnly: true
-        roleId:
-          type: string
-          description: ID of the assigned role.
-          format: uuid
-        customerDisplayName:
-          type: string
-          description: Display name of the user.
-          readOnly: true
-        roleName:
-          type: string
-          description: Name of the assigned role
-          readOnly: true
-        applicableToRelatedCustomersOnly:
-          type: boolean
-        externallyManaged:
-          type: boolean
-      required:
-        - id
-        - customerId
-        - assignedAt
-        - roleId
-        - customerDisplayName
-        - roleName
-    systemRoleAssignment-synchronization:
+    systemRoleAssignment:
       title: ''
       type: object
       examples:
@@ -2084,5 +2026,4 @@ components:
       required: true
       schema:
         type: integer
-        format: int32
       description: ID of the resource in HsM. Can be an HsM integer Id or a synchronization ID.
