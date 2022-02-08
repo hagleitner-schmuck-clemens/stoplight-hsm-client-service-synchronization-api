@@ -1,12 +1,12 @@
 openapi: 3.1.0
 info:
   title: Synchronization API
-  version: 1.0.0-beta.9
+  version: 1.0.0-beta.10
   summary: HsM Client Service API for business data synchronization
   description: |-
     ## General description
 
-    This API is used to synchronize business data resources with external systems. It uses service authentication with tokens provided by AD. Once authenticated a process accessing this API is authorized to access any endpoint without restrictions.
+    This API is used to synchronize business data resources with external systems. Once authenticated a process using this API is authorized to access any endpoint without restrictions.
 
     The Standard API is a client agnostic API to the HsM Client Service.
 
@@ -17,6 +17,9 @@ info:
 
     ### Responses
     This specification shows only the most relevant responses. Clients have to still handle all other possible HTTP Response codes.
+
+    ### Id and synchronizationId
+    As this API covers the special use case of data synchronization, resources can be identified with either their internal HsM Id (an Int32) or a synchronizationId (a UUID). The service will try to parse the ID into one of the two types and will identify the resource accordingly.
   contact:
     name: Hagleitner Hygiene Internaltional GmbH
     url: 'http://www.hagleitner.com/'
@@ -24,15 +27,11 @@ info:
 servers:
   - url: 'http://localhost:3000'
 tags:
-  - name: Branding
   - name: Customers
   - name: CustomerRelations
   - name: RoleAssignments
-  - name: SelfRegistration
   - name: System
   - name: Users
-  - name: CustomerFavorites
-  - name: Locations
 paths:
   /customers:
     parameters: []
@@ -51,7 +50,7 @@ paths:
                   items:
                     type: array
                     items:
-                      $ref: '#/components/schemas/customer-synchronization'
+                      $ref: '#/components/schemas/customer'
                   totalPages:
                     $ref: '#/components/schemas/pagination-totalPages'
                   totalItems:
@@ -82,7 +81,7 @@ paths:
                 $ref: '#/components/schemas/response-403-forbidden'
         '404':
           description: Not Found
-      description: Gets customers with detail information useful for synchronization with external systems. The collection is ordered by name1.
+      description: Gets customers. The collection is ordered by name1.
       parameters:
         - schema:
             type: string
@@ -90,7 +89,7 @@ paths:
             example: 98aea202-354b-4912-81f7-364e609fe650
           in: query
           name: synchronizationId
-          description: Filters for a customer with the given synchronization Id. Only a customer with an exact match will pass the filter.
+          description: Filters for a customer with the given synchronization ID. Only a customer with an exact match will pass the filter.
         - schema:
             type: string
             example: '2021-11-12T21:15:13.1234+01:00'
@@ -113,10 +112,14 @@ paths:
             type: string
           in: query
           name: customerNumber
-          description: Filters for customers based on the customer number. Note that the customer Id is only unique within all customers of the same reseller.
+          description: Filters for customers based on the customer number. Note that the customer number is only unique within all customers of the same reseller.
         - schema:
             type: string
             pattern: '(\w+)(,\w+)*'
+            enum:
+              - active
+              - inactive
+              - deleted
           in: query
           name: status
           description: Filters customers based on the customer status. Only customers in one of the status will be included in the result set.        -
@@ -125,7 +128,7 @@ paths:
             format: uuid
           in: query
           name: resellerId
-          description: Filters for sub customer of the given reseller.
+          description: Filters for sub-customers of the given reseller.
         - schema:
             type: string
           in: query
@@ -162,18 +165,12 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/customer-synchronization'
+              $ref: '#/components/schemas/customer'
       tags:
         - Customers
   '/customers/{id}':
     parameters:
-      - schema:
-          type: string
-          format: uuid
-        name: id
-        in: path
-        required: true
-        description: ID of the customer
+      - $ref: '#/components/parameters/id'
     get:
       summary: '/customers/{id} GET'
       operationId: customer#get
@@ -190,7 +187,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/customer-synchronization'
+                $ref: '#/components/schemas/customer'
         '400':
           description: Bad Request
           content:
@@ -205,7 +202,7 @@ paths:
           description: Not Found
         '500':
           description: Internal Server Error
-      description: Gets customer with detail information useful for synchronization with other systems.
+      description: Gets a customer.
       parameters: []
     put:
       summary: '/customers/{id} PUT'
@@ -229,21 +226,15 @@ paths:
           description: Not Found
         '500':
           description: Internal Server Error
-      description: Updates a customer with detailled information for synchronization processes.
+      description: Updates a customer.
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/customer-synchronization'
+              $ref: '#/components/schemas/customer'
   '/customers/{id}/condition-relation':
     parameters:
-      - schema:
-          type: string
-          format: uuid
-        name: id
-        in: path
-        required: true
-        description: ID of the customer
+      - $ref: '#/components/parameters/id'
     get:
       summary: '/customers/{id}/condition-relation GET'
       operationId: customer-condition-relation#get
@@ -254,7 +245,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/customerRelation-synchronization'
+                $ref: '#/components/schemas/customerRelation'
         '400':
           description: Bad Request
           content:
@@ -272,7 +263,7 @@ paths:
           description: Not Found
         '500':
           description: Internal Server Error
-      description: 'Gets the condition relation of this customer (i.e. looking up the relation tree) with detail information useful for synchronization with other systems. '
+      description: Gets the condition relation of this customer (i.e. looking up the relation tree).
       parameters: []
       tags:
         - CustomerRelations
@@ -303,7 +294,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/customerRelation-synchronization'
+              $ref: '#/components/schemas/customerRelation-put'
     delete:
       summary: '/customers/{id}/condition-relation DELETE'
       operationId: customer-condition-relation#delete
@@ -321,13 +312,7 @@ paths:
         - CustomerRelations
   '/customers/{id}/condition-relations':
     parameters:
-      - schema:
-          type: string
-          format: uuid
-        name: id
-        in: path
-        required: true
-        description: ID of the customer
+      - $ref: '#/components/parameters/id'
     get:
       summary: '/customers/{id}/condition-relations GET'
       operationId: customer-condition-relations#get
@@ -344,7 +329,7 @@ paths:
                   items:
                     type: array
                     items:
-                      $ref: '#/components/schemas/customerRelation-synchronization'
+                      $ref: '#/components/schemas/customerRelation'
                   totalPages:
                     $ref: '#/components/schemas/pagination-totalPages'
                   totalItems:
@@ -379,13 +364,7 @@ paths:
         - $ref: '#/components/parameters/pageNumber'
   '/customers/{id}/hierarchy-relation':
     parameters:
-      - schema:
-          type: string
-          format: uuid
-        name: id
-        in: path
-        required: true
-        description: ID of the customer
+      - $ref: '#/components/parameters/id'
     get:
       summary: '/customers/{id}/hierarchy-relation GET'
       operationId: customer-customer-hierarchy-relation#get
@@ -398,7 +377,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/customerRelation-synchronization'
+                $ref: '#/components/schemas/customerRelation'
         '400':
           description: Bad Request
           content:
@@ -413,7 +392,7 @@ paths:
           description: Not Found
         '500':
           description: Internal Server Error
-      description: 'Gets the customer-hierarchy relation of this customer (i.e. looking up the relation tree) with detail information useful for synchronization with other systems. '
+      description: Gets the customer-hierarchy relation of this customer (i.e. looking up the relation tree).
       parameters: []
     put:
       summary: '/customers/{id}/hierarchy-relation PUT'
@@ -442,7 +421,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/customerRelation-synchronization'
+              $ref: '#/components/schemas/customerRelation-put'
     delete:
       summary: '/customers/{id}/hierarchy-relation DELETE'
       operationId: customer-customer-hierarchy-relation#delete
@@ -460,13 +439,7 @@ paths:
         - CustomerRelations
   '/customers/{id}/hierarchy-relations':
     parameters:
-      - schema:
-          type: string
-          format: uuid
-        name: id
-        in: path
-        required: true
-        description: ID of the customer
+      - $ref: '#/components/parameters/id'
     get:
       summary: '/customers/{id}/hierarchy-relations GET'
       tags:
@@ -483,7 +456,7 @@ paths:
                   items:
                     type: array
                     items:
-                      $ref: '#/components/schemas/customerRelation-synchronization'
+                      $ref: '#/components/schemas/customerRelation'
                   totalPages:
                     $ref: '#/components/schemas/pagination-totalPages'
                   totalItems:
@@ -518,13 +491,7 @@ paths:
         - $ref: '#/components/parameters/pageNumber'
   '/customers/{id}/invoicing-relation':
     parameters:
-      - schema:
-          type: string
-          format: uuid
-        name: id
-        in: path
-        description: ID of the customer
-        required: true
+      - $ref: '#/components/parameters/id'
     get:
       summary: '/customers/{id}/invoicing-relation GET'
       operationId: customer-invoicing-relation#get
@@ -537,7 +504,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/customerRelation-synchronization'
+                $ref: '#/components/schemas/customerRelation'
         '400':
           description: Bad Request
           content:
@@ -556,7 +523,7 @@ paths:
                 $ref: ''
         '500':
           description: Internal Server Error
-      description: 'Gets the invoicing relation of this customer (i.e. looking up the reseller relation) with detail information useful for synchronization with other systems. '
+      description: 'Gets the invoicing relation of this customer (i.e. looking up the reseller relation). '
       parameters: []
     put:
       summary: '/customers/{id}/invoicing-relation PUT'
@@ -585,7 +552,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/user-synchronization'
+              $ref: '#/components/schemas/customerRelation-put'
     delete:
       summary: '/customers/{id}/invoicing-relation DELETE'
       operationId: delete-customers-id-invoicing-relation
@@ -597,13 +564,7 @@ paths:
         - CustomerRelations
   '/customers/{id}/invoicing-relations':
     parameters:
-      - schema:
-          type: string
-          format: uuid
-        name: id
-        in: path
-        required: true
-        description: ID of the customer
+      - $ref: '#/components/parameters/id'
     get:
       summary: '/customers/{id}/invoicing-relations GET'
       operationId: customer-invoicing-relations#get
@@ -620,7 +581,7 @@ paths:
                   items:
                     type: array
                     items:
-                      $ref: '#/components/schemas/customerRelation-synchronization'
+                      $ref: '#/components/schemas/customerRelation'
                   totalPages:
                     $ref: '#/components/schemas/pagination-totalPages'
                   totalItems:
@@ -655,13 +616,7 @@ paths:
         - $ref: '#/components/parameters/pageNumber'
   '/customers/{id}/reseller-relation':
     parameters:
-      - schema:
-          type: string
-          format: uuid
-        name: id
-        in: path
-        required: true
-        description: ID of the customer
+      - $ref: '#/components/parameters/id'
     get:
       summary: '/customers/{id}/reseller-relation GET'
       operationId: customer-reseller-relation#get
@@ -672,7 +627,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/customerRelation-synchronization'
+                $ref: '#/components/schemas/customerRelation'
         '400':
           description: Bad Request
           content:
@@ -687,7 +642,7 @@ paths:
           description: Not Found
         '500':
           description: Internal Server Error
-      description: 'Gets the reseller relation of this customer (i.e. looking up the reseller relation) with detail information useful for synchronization with other systems. '
+      description: 'Gets the reseller relation of this customer (i.e. looking up the reseller relation). '
       parameters: []
       tags:
         - CustomerRelations
@@ -716,18 +671,12 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/customerRelation-synchronization'
+              $ref: '#/components/schemas/customerRelation-put'
       tags:
         - CustomerRelations
   '/customers/{id}/reseller-relations':
     parameters:
-      - schema:
-          type: string
-          format: uuid
-        name: id
-        in: path
-        required: true
-        description: ID of the customer
+      - $ref: '#/components/parameters/id'
     get:
       summary: '/customers/{id}/reseller-relations GET'
       operationId: customer-reseller-relations#get
@@ -744,7 +693,7 @@ paths:
                   items:
                     type: array
                     items:
-                      $ref: '#/components/schemas/customerRelation-synchronization'
+                      $ref: '#/components/schemas/customerRelation'
                   totalPages:
                     $ref: '#/components/schemas/pagination-totalPages'
                   totalItems:
@@ -779,12 +728,7 @@ paths:
         - $ref: '#/components/parameters/pageNumber'
   '/customers/{id}/role-assignments':
     parameters:
-      - schema:
-          type: string
-        name: id
-        in: path
-        required: true
-        description: ID of the customer
+      - $ref: '#/components/parameters/id'
     get:
       summary: '/customers/{id}/role-assignments GET'
       responses:
@@ -798,7 +742,7 @@ paths:
                   items:
                     type: array
                     items:
-                      $ref: '#/components/schemas/customerRoleAssignment-customer-synchronization'
+                      $ref: '#/components/schemas/customerRoleAssignment'
                   totalPages:
                     $ref: '#/components/schemas/pagination-totalPages'
                   totalItems:
@@ -828,7 +772,7 @@ paths:
         '500':
           description: Internal Server Error
       operationId: customer-role-assignment#GET
-      description: Gets roles-assignments of this customer together with synchronization data. Role-assignments are ordered by the assignment date ascending (oldest first).
+      description: Gets roles-assignments of this customer. Role-assignments are ordered by the assignment date ascending (oldest first).
       parameters:
         - $ref: '#/components/parameters/pageSize'
         - $ref: '#/components/parameters/pageNumber'
@@ -850,7 +794,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/customerRoleAssignment-user'
+                $ref: '#/components/schemas/customerRoleAssignment'
         '400':
           description: Bad Request
           content:
@@ -870,18 +814,12 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/customerRoleAssignment-customer'
+              $ref: '#/components/schemas/customerRoleAssignment'
       tags:
         - RoleAssignments
   '/customers/{id}/status':
     parameters:
-      - schema:
-          type: string
-          format: uuid
-        name: id
-        in: path
-        required: true
-        description: ID of the customer
+      - $ref: '#/components/parameters/id'
     get:
       summary: '/customers/{id}/status GET'
       tags:
@@ -900,7 +838,7 @@ paths:
                 example: inactive
       operationId: customer-status#get
       x-internal: false
-      description: Gets all the customers on the condition path from the root to this customer as sorted list.
+      description: Gets the life-cycle status of a customer.
     put:
       summary: '/customers/{id}/status PUT'
       operationId: customer-status#put
@@ -932,7 +870,7 @@ paths:
                 $ref: '#/components/schemas/response-403-forbidden'
         '404':
           description: Not Found
-      description: Modifies the status of a customer.
+      description: Modifies the life-cylce status of a customer.
       requestBody:
         content:
           application/json:
@@ -959,7 +897,7 @@ paths:
                   items:
                     type: array
                     items:
-                      $ref: '#/components/schemas/customerRelation-synchronization-list'
+                      $ref: '#/components/schemas/customerRelation-list'
                   totalPages:
                     $ref: '#/components/schemas/pagination-totalPages'
                   totalItems:
@@ -989,17 +927,17 @@ paths:
         '500':
           description: Internal Server Error
       operationId: customer-relationst#GET
-      description: 'Gets a list of customer relations according to the query parameters. The '
+      description: 'Gets a list of customer relations according to the query parameters. '
       parameters:
         - $ref: '#/components/parameters/pageSize'
         - $ref: '#/components/parameters/pageNumber'
         - schema:
             type: string
             enum:
-              - customer-hierarchy
               - condition
               - reseller
               - invoicing
+              - hierarchy
             example: invoicing
           in: query
           name: relationType
@@ -1009,12 +947,12 @@ paths:
             type: string
           in: query
           name: childCustomerId
-          description: Filters for relations where the child is the customer with the given ID.
+          description: 'Filters for relations where the child is the customer with the given ID. , Can be the internal HsM integer Id or a synchronization ID.  '
         - schema:
             type: string
           in: query
           name: parentCustomerId
-          description: Filters for relations where the parent is the customer with the given ID.
+          description: 'Filters for relations where the parent is the customer with the given ID.. Can be the internal HsM integer Id or a synchronization ID.  '
         - schema:
             type: boolean
           in: query
@@ -1023,16 +961,11 @@ paths:
       x-internal: false
       tags:
         - RoleAssignments
-  '/role-assignments/{id}':
+  '/customer-role-assignments/{id}':
     parameters:
-      - schema:
-          type: string
-        name: id
-        in: path
-        required: true
-        description: ID of the customer
+      - $ref: '#/components/parameters/id'
     get:
-      summary: '/role-assignments/{id}'
+      summary: '/customer-role-assignments/{id}'
       tags:
         - RoleAssignments
       responses:
@@ -1041,11 +974,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/customerRoleAssignment-customer'
+                $ref: '#/components/schemas/customerRoleAssignment'
       operationId: role-assignments#get
-      description: Gets a role-assignemnt
+      description: Gets a role-assignemnt of a user on a customer.
       parameters: []
-      x-internal: true
+      x-internal: false
   /system-role-assignments:
     parameters: []
     get:
@@ -1061,7 +994,7 @@ paths:
                   items:
                     type: array
                     items:
-                      $ref: '#/components/schemas/systemRoleAssignment-synchronization'
+                      $ref: '#/components/schemas/systemRoleAssignment'
                   totalPages:
                     $ref: '#/components/schemas/pagination-totalPages'
                   totalItems:
@@ -1128,28 +1061,22 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/systemRoleAssignment-synchronization'
+              $ref: '#/components/schemas/systemRoleAssignment'
       description: Creates a new system role assignment
       tags:
         - RoleAssignments
-  '/system/role-assignments/{id}':
+  '/system-role-assignments/{id}':
     parameters:
-      - schema:
-          type: string
-          format: uuid
-        name: id
-        in: path
-        required: true
-        description: ID of the customer
+      - $ref: '#/components/parameters/id'
     get:
-      summary: '/system/role-assignments/{id} GET'
+      summary: '/system-role-assignments/{id} GET'
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/systemRoleAssignment-synchronization'
+                $ref: '#/components/schemas/systemRoleAssignment'
         '400':
           description: Bad Request
           content:
@@ -1164,13 +1091,7 @@ paths:
           description: Not Found
       operationId: system-role-assignment#get
       description: Gets a role assignement between users and the system.
-      parameters:
-        - schema:
-            type: string
-            format: uuid
-          in: query
-          name: Id
-          description: ID of the role assignment
+      parameters: []
       x-internal: false
       tags:
         - RoleAssignments
@@ -1220,7 +1141,7 @@ paths:
                   items:
                     type: array
                     items:
-                      $ref: '#/components/schemas/user-synchronization'
+                      $ref: '#/components/schemas/user'
                   totalPages:
                     $ref: '#/components/schemas/pagination-totalPages'
                   totalItems:
@@ -1260,6 +1181,10 @@ paths:
         - schema:
             type: string
             example: 'active,inactive'
+            enum:
+              - active
+              - inactive
+              - deleted
           in: query
           name: status
           description: Filters users based on user status. If given only users one of the given status will pass the filter.
@@ -1321,16 +1246,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/user-synchronization'
+              $ref: '#/components/schemas/user'
   '/users/{id}':
     parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
-        description: UUID of the collection element
+      - $ref: '#/components/parameters/id'
     get:
       summary: '/users/{id} GET'
       operationId: user#get
@@ -1342,7 +1261,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/user-synchronization'
+                $ref: '#/components/schemas/user'
         '400':
           description: Bad Request
           content:
@@ -1385,7 +1304,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/user-synchronization'
+              $ref: '#/components/schemas/user'
     patch:
       summary: '/users/{id} PATCH'
       operationId: user#patch
@@ -1412,15 +1331,11 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/user-synchronization'
-      description: Performs a partial update on a user-synchronization resource.
+              $ref: '#/components/schemas/user'
+      description: Performs a partial update on a user resource.
   '/users/{id}/status':
     parameters:
-      - schema:
-          type: string
-        name: id
-        in: path
-        required: true
+      - $ref: '#/components/parameters/id'
     get:
       summary: '/users/{id}/status GET'
       operationId: user-status#get
@@ -1449,18 +1364,13 @@ paths:
           description: Forbidden
         '404':
           description: Not Found
-      description: |-
-        Gets a the status of a specific user.
-        Active: The user can interact with the system.
-        Inactive: The user can (temporarily) not interact with the system but can be reactivatd
-        Deleted: The user was deleted and cannot be re-activated. The e-mail address of deleted users does not have to be unique within the system.
-        Masked: The user was deleted and finally the data of the user was masked to support GPDR requirements. Masked users cannot be reactivated. All personal infomrmation is removed.
+      description: Gets the life-cycle status of a user.
       tags:
         - Users
     put:
       summary: '/users/{id}/status PUT'
       operationId: user-status#put
-      description: Updates a user's status
+      description: Sets the life-cycle status of a user.
       responses:
         '200':
           description: OK
@@ -1494,14 +1404,14 @@ paths:
                 - masked
 components:
   schemas:
-    customer-synchronization:
+    customer:
       type: object
       title: ''
       description: Describes a customer of the HsM system together with information relevant for synchronization with other business systems.
       properties:
         id:
-          type: string
-          format: uuid
+          type: integer
+          format: int32
           description: ID of the user within the HsM system
           readOnly: true
         code:
@@ -1559,7 +1469,7 @@ components:
           type: string
           maxLength: 20
           example: 21-0789-B
-          description: The customer number used by the reseller to uniquely identify this customer
+          description: The customer number used by the reseller to uniquely identify this customer.
         emailAddress:
           type: string
           description: The companies main e-mail address
@@ -1631,7 +1541,7 @@ components:
           readOnly: true
         customerCapabilityLevel:
           type: integer
-          minimum: 0
+          minimum: 1
           maximum: 10
           default: 10
           description: The capability level of this customer.
@@ -1649,16 +1559,19 @@ components:
         - emailAddress
         - externallyManaged
         - resellerId
-    customerRelation-synchronization:
+    customerRelation:
       type: object
       title: ''
       description: 'Represents a customer relation between two customers in HsM, including synchronization data.'
       properties:
         id:
-          type: string
-          format: uuid
+          type: integer
+          format: int32
           readOnly: true
         customerId:
+          type: integer
+          format: int32
+        customerSynchronizationId:
           type: string
           format: uuid
         lastUpdatedAt:
@@ -1682,19 +1595,58 @@ components:
         - id
         - customerId
         - externallyManaged
-    customerRelation-synchronization-list:
+    customerRelation-put:
       type: object
       title: ''
       description: 'Represents a customer relation between two customers in HsM, including synchronization data.'
       properties:
         id:
+          format: uuid
+          type: integer
+          readOnly: true
+        customerId:
+          type: string
+          description: 'ID of the parent customer. Can be an internal HsM integer Id, or a synchronization ID.'
+        lastUpdatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+        synchronizationId:
           type: string
           format: uuid
+        externallyManaged:
+          type: boolean
+          default: false
+          description: 'If true this resource is exernally managed, the possibilities to modify the resource in HsM is then limited.'
+        synchronizationInformation:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+        - id
+        - customerId
+        - externallyManaged
+    customerRelation-list:
+      type: object
+      title: ''
+      description: 'Represents a customer relation between two customers in HsM, including synchronization data.'
+      properties:
+        id:
+          format: uuid
+          type: integer
           readOnly: true
         parentId:
+          format: uuid
+          type: integer
+        parentSynchronizationId:
           type: string
           format: uuid
         childId:
+          format: uuid
+          type: integer
+        childSynchronizationId:
           type: string
           format: uuid
         lastUpdatedAt:
@@ -1719,15 +1671,15 @@ components:
         - parentId
         - childId
         - externallyManaged
-    user-synchronization:
+    user:
       type: object
       title: ''
       description: 'Represents a user of the HsM system including synchronization data. '
       properties:
         id:
-          type: string
           format: uuid
           description: ID of the user within the HsM system.
+          type: integer
           readOnly: true
         givenName:
           type: string
@@ -1787,6 +1739,10 @@ components:
           type: boolean
           default: false
           description: 'If true this resource is exernally managed, the possibilities to modify the resource in HsM is then limited.'
+        userCapabilityLevel:
+          type: integer
+          minimum: 1
+          maximum: 10
       required:
         - id
         - givenName
@@ -1900,57 +1856,7 @@ components:
     response-403-forbidden:
       type: object
       title: ''
-    customerRoleAssignment-customer:
-      title: ''
-      type: object
-      examples:
-        - id: 497f6eca-6276-4993-bfeb-53cbbbba6f08
-          userId: 2c4a230c-5085-4924-a3e1-25fb4fc5965b
-          assignedAt: '2019-08-24T14:15:22Z'
-          roleId: 7382d58e-652a-4905-b7c9-bcca1e0e5391
-          userDisplayName: 'Doe, John'
-          roleName: Customer Administrator
-      description: Represents a customer role assignment from a customers perspective.
-      properties:
-        id:
-          type: string
-          description: ID of the role assignment
-          format: uuid
-          readOnly: true
-        userId:
-          type: string
-          format: uuid
-          description: ID of user who is assigned a role
-        assignedAt:
-          type: string
-          description: Date when the role was assigned
-          format: date-time
-          readOnly: true
-        roleId:
-          type: string
-          description: ID of the assigned role.
-          format: uuid
-        userDisplayName:
-          type: string
-          description: Display name of the user.
-          readOnly: true
-        roleName:
-          type: string
-          description: Name of the assigned role
-          readOnly: true
-        applicableToRelatedCustomersOnly:
-          type: boolean
-        externallyManaged:
-          type: boolean
-      required:
-        - id
-        - userId
-        - assignedAt
-        - roleId
-        - userDisplayName
-        - roleName
-        - externallyManaged
-    customerRoleAssignment-customer-synchronization:
+    customerRoleAssignment:
       title: ''
       type: object
       examples:
@@ -1963,31 +1869,23 @@ components:
       description: Represents a customer role assignment from a customers perspective. Includes additional data for synchronization.
       properties:
         id:
-          type: string
+          type: integer
           description: ID of the role assignment
-          format: uuid
+          format: int32
           readOnly: true
         userId:
-          type: string
-          format: uuid
+          type: integer
           description: ID of user who is assigned a role
+          format: int32
         assignedAt:
           type: string
           description: Date when the role was assigned
           format: date-time
           readOnly: true
         roleId:
-          type: string
+          type: integer
           description: ID of the assigned role.
-          format: uuid
-        userDisplayName:
-          type: string
-          description: Display name of the user.
-          readOnly: true
-        roleName:
-          type: string
-          description: Name of the assigned role
-          readOnly: true
+          format: int32
         synchronizationid:
           type: string
           format: uuid
@@ -1998,64 +1896,14 @@ components:
           default: false
         applicableToRelatedCustomersOnly:
           type: boolean
+          default: false
       required:
         - id
         - userId
         - assignedAt
         - roleId
-        - userDisplayName
-        - roleName
         - externallyManaged
-    customerRoleAssignment-user:
-      title: ''
-      type: object
-      examples:
-        - id: 497f6eca-6276-4993-bfeb-53cbbbba6f08
-          userId: 2c4a230c-5085-4924-a3e1-25fb4fc5965b
-          assignedAt: '2019-08-24T14:15:22Z'
-          roleId: 7382d58e-652a-4905-b7c9-bcca1e0e5391
-          userDisplayName: 'Doe, John'
-          roleName: Customer Administrator
-      description: Represents a customer role assignment from a users perspective.
-      properties:
-        id:
-          type: string
-          description: ID of the role assignment
-          format: uuid
-          readOnly: true
-        customerId:
-          type: string
-          format: uuid
-          description: ID of user who is assigned a role
-        assignedAt:
-          type: string
-          description: Date when the role was assigned
-          format: date-time
-          readOnly: true
-        roleId:
-          type: string
-          description: ID of the assigned role.
-          format: uuid
-        customerDisplayName:
-          type: string
-          description: Display name of the user.
-          readOnly: true
-        roleName:
-          type: string
-          description: Name of the assigned role
-          readOnly: true
-        applicableToRelatedCustomersOnly:
-          type: boolean
-        externallyManaged:
-          type: boolean
-      required:
-        - id
-        - customerId
-        - assignedAt
-        - roleId
-        - customerDisplayName
-        - roleName
-    systemRoleAssignment-synchronization:
+    systemRoleAssignment:
       title: ''
       type: object
       examples:
@@ -2069,8 +1917,7 @@ components:
       properties:
         id:
           type: string
-          description: ID of the role assignment
-          format: uuid
+          description: 'ID of the role assignment. Can be an internal HsM integer Id, or a synchronization ID.'
           readOnly: true
         assignedAt:
           type: string
@@ -2078,12 +1925,12 @@ components:
           format: date-time
           readOnly: true
         roleId:
-          type: string
+          type: integer
           description: ID of the assigned role.
-          format: uuid
+          format: int32
         userId:
-          type: string
-          format: uuid
+          type: integer
+          format: int32
         externallyManaged:
           type: boolean
           default: false
@@ -2148,3 +1995,11 @@ components:
         minimum: 1
         example: 200
       description: 'Pagination, 1-based number of the page to return.'
+    id:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: 'ID of the, can be the internal HsM integer Id or a synchronization ID.'
+  responses: {}
