@@ -1864,7 +1864,6 @@ components:
           userId: 2c4a230c-5085-4924-a3e1-25fb4fc5965b
           assignedAt: '2019-08-24T14:15:22Z'
           roleId: 7382d58e-652a-4905-b7c9-bcca1e0e5391
-          userDisplayName: 'Doe, John'
           roleName: Customer Administrator
       description: Represents a customer role assignment from a customers perspective. Includes additional data for synchronization.
       properties:
@@ -1911,7 +1910,6 @@ components:
           userId: 2c4a230c-5085-4924-a3e1-25fb4fc5965b
           assignedAt: '2019-08-24T14:15:22Z'
           roleId: 7382d58e-652a-4905-b7c9-bcca1e0e5391
-          userDisplayName: 'Doe, John'
           roleName: Customer Administrator
       description: Represents a role assignment from a users perspective.
       properties:
