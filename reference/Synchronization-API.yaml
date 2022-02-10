@@ -1123,6 +1123,27 @@ paths:
           description: ID of the role assignment.
       tags:
         - RoleAssignments
+  /roles:
+    get:
+      summary: /roles GET
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/role'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      operationId: get-roles
+      description: 'Gets all defined roles in HsM. '
   /users:
     parameters: []
     get:
@@ -1897,6 +1918,26 @@ components:
         - assignedAt
         - roleId
         - externallyManaged
+    pagination-totalPages:
+      type: integer
+      title: pagination-totalPages
+      description: Total number of pages available.
+      minimum: 0
+    pagination-totaItems:
+      type: integer
+      title: pagination-totalItems
+      description: Total number of items available.
+      minimum: 0
+    pagination-currentPage:
+      type: integer
+      title: pagination-totalPages
+      description: Current page included in this result.
+      minimum: 0
+    pagination-pageSize:
+      type: integer
+      title: pagination-totalPages
+      description: Page size that was used to generate the result set.
+      minimum: 0
     systemRoleAssignment:
       title: ''
       type: object
@@ -1938,6 +1979,18 @@ components:
         - roleId
         - userId
         - externallyManaged
+    role:
+      title: role
+      type: object
+      properties:
+        id:
+          type: integer
+        code:
+          type: string
+          description: The unique code of the role
+      required:
+        - id
+        - code
     userStatus:
       type: string
       title: ''
@@ -1948,26 +2001,6 @@ components:
         - masked
       description: The status of a user within HsM.
       default: active
-    pagination-totalPages:
-      type: integer
-      title: pagination-totalPages
-      description: Total number of pages available.
-      minimum: 0
-    pagination-totaItems:
-      type: integer
-      title: pagination-totalItems
-      description: Total number of items available.
-      minimum: 0
-    pagination-currentPage:
-      type: integer
-      title: pagination-totalPages
-      description: Current page included in this result.
-      minimum: 0
-    pagination-pageSize:
-      type: integer
-      title: pagination-totalPages
-      description: Page size that was used to generate the result set.
-      minimum: 0
   parameters:
     pageSize:
       name: pageSize
