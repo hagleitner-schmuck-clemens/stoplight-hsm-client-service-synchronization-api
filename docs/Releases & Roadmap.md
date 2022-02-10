@@ -12,6 +12,7 @@
 * 2022-01-19 (Version 1.0.0-beta.8): Fixed naming in customer relations, removed unused models, fixed timezone and locale naming, update user-model (OpenID conforance)
 * 2022-01-27 (Version 1.0.0-beta.9): Fixed tagging, added customer capability level, fixed request body for cutomer relation endpoints, added delete operations to customer relation endpoints.
 * 2022-02-08 (version 1.0.0-beta.10): Renamed models for user, customer, customer-relation; Intruduced user-capability-level and customer-capability-level; changed to int32 for internal HsM ids, introduced Polymorphism on IDs
+* 2022-02-10 (version 1.0.0.-beta.11): Removed Name from role assignments.
 
 ### Roadmap
 
