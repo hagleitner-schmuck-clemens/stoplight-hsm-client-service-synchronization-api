@@ -1693,85 +1693,67 @@ components:
         - parentId
         - childId
         - externallyManaged
-    user:
-      type: object
+    customerRoleAssignment:
       title: ''
-      description: 'Represents a user of the HsM system including synchronization data. '
+      type: object
+      examples: []
+      description: Represents a customer role assignment from a customers perspective. Includes additional data for synchronization.
       properties:
         id:
-          format: uuid
-          description: ID of the user within the HsM system.
           type: integer
+          description: ID of the role assignment
+          format: int32
           readOnly: true
-        givenName:
+        userId:
+          type: integer
+          description: ID of user who is assigned a role
+          format: int32
+        assignedAt:
           type: string
-          example: John
-          maxLength: 50
-          description: Given name of the user
-        familyName:
-          type: string
-          example: Doe
-          maxLength: 50
-          description: 'Surname(s) or last name(s) of the user. Note that in some cultures, people can have multiple family names or no family name; all can be present, with the names being separated by space characters.'
-        emailAddress:
-          type: string
-          description: The users e-mail address. This address must be unique within all non deleted users in the HsM system.
-          format: email
-          example: john@doe.com
-          maxLength: 256
-        status:
-          type: string
-          enum:
-            - active
-            - inactive
-            - deleted
-            - masked
-          readOnly: true
-        locale:
-          type: string
-          description: The locale the user wants to use in interaction with the system. Defined as BCP 47/RFC 5646 language tag.
-          example: de-AT
-          maxLength: 35
-        timeZone:
-          type: string
-          description: |-
-            The time zone the user wants to use in interaction with the system. String from zoneinfo time zone database.
-
-            This time zone is a default for this user, client systems might however choose to use another time zones for interaction with the HsM system.
-          example: Europe/Vienna
-        createdAt:
-          type: string
+          description: Date when the role was assigned
           format: date-time
-          example: '2021-08-23T16:15:18.123+01:00'
           readOnly: true
-        latestUpdatedAt:
-          type: string
-          description: 'Describes when the user was last modified within HsM. '
-          format: date-time
-          example: '2021-08-23T16:15:18.123+01:00'
-          readOnly: true
-        synchronizationId:
+        roleId:
+          type: integer
+          description: ID of the assigned role.
+          format: int32
+        synchronizationid:
           type: string
           format: uuid
-          description: ID of the user in an external system.
         synchronizationInformation:
           type: string
-          description: A JSON document that can be used by synchronization processes to store synchronization information with this user. The schema of the JSON document is defined by the external synchronization process.
         externallyManaged:
           type: boolean
           default: false
-          description: 'If true this resource is exernally managed, the possibilities to modify the resource in HsM is then limited.'
-        userCapabilityLevel:
-          type: integer
-          minimum: 1
-          maximum: 10
+        applicableToRelatedCustomersOnly:
+          type: boolean
+          default: false
       required:
         - id
-        - givenName
-        - emailAddress
-        - createdAt
-        - latestUpdatedAt
+        - userId
+        - assignedAt
+        - roleId
         - externallyManaged
+    pagination-totalPages:
+      type: integer
+      title: pagination-totalPages
+      description: Total number of pages available.
+      minimum: 0
+    pagination-totaItems:
+      type: integer
+      title: pagination-totalItems
+      description: Total number of items available.
+      minimum: 0
+    pagination-currentPage:
+      type: integer
+      title: pagination-totalPages
+      description: Current page included in this result.
+      minimum: 0
+    pagination-pageSize:
+      type: integer
+      title: pagination-totalPages
+      description: Page size that was used to generate the result set.
+      minimum: 0
     response-400-badRequest:
       description: ''
       type: object
@@ -1878,67 +1860,6 @@ components:
     response-403-forbidden:
       type: object
       title: ''
-    customerRoleAssignment:
-      title: ''
-      type: object
-      examples: []
-      description: Represents a customer role assignment from a customers perspective. Includes additional data for synchronization.
-      properties:
-        id:
-          type: integer
-          description: ID of the role assignment
-          format: int32
-          readOnly: true
-        userId:
-          type: integer
-          description: ID of user who is assigned a role
-          format: int32
-        assignedAt:
-          type: string
-          description: Date when the role was assigned
-          format: date-time
-          readOnly: true
-        roleId:
-          type: integer
-          description: ID of the assigned role.
-          format: int32
-        synchronizationid:
-          type: string
-          format: uuid
-        synchronizationInformation:
-          type: string
-        externallyManaged:
-          type: boolean
-          default: false
-        applicableToRelatedCustomersOnly:
-          type: boolean
-          default: false
-      required:
-        - id
-        - userId
-        - assignedAt
-        - roleId
-        - externallyManaged
-    pagination-totalPages:
-      type: integer
-      title: pagination-totalPages
-      description: Total number of pages available.
-      minimum: 0
-    pagination-totaItems:
-      type: integer
-      title: pagination-totalItems
-      description: Total number of items available.
-      minimum: 0
-    pagination-currentPage:
-      type: integer
-      title: pagination-totalPages
-      description: Current page included in this result.
-      minimum: 0
-    pagination-pageSize:
-      type: integer
-      title: pagination-totalPages
-      description: Page size that was used to generate the result set.
-      minimum: 0
     systemRoleAssignment:
       title: ''
       type: object
@@ -1992,6 +1913,85 @@ components:
       required:
         - id
         - code
+    user:
+      type: object
+      title: ''
+      description: 'Represents a user of the HsM system including synchronization data. '
+      properties:
+        id:
+          format: uuid
+          description: ID of the user within the HsM system.
+          type: integer
+          readOnly: true
+        givenName:
+          type: string
+          example: John
+          maxLength: 50
+          description: Given name of the user
+        familyName:
+          type: string
+          example: Doe
+          maxLength: 50
+          description: 'Surname(s) or last name(s) of the user. Note that in some cultures, people can have multiple family names or no family name; all can be present, with the names being separated by space characters.'
+        emailAddress:
+          type: string
+          description: The users e-mail address. This address must be unique within all non deleted users in the HsM system.
+          format: email
+          example: john@doe.com
+          maxLength: 256
+        status:
+          type: string
+          enum:
+            - active
+            - inactive
+            - deleted
+            - masked
+          readOnly: true
+        locale:
+          type: string
+          description: The locale the user wants to use in interaction with the system. Defined as BCP 47/RFC 5646 language tag.
+          example: de-AT
+          maxLength: 35
+        timeZone:
+          type: string
+          description: |-
+            The time zone the user wants to use in interaction with the system. String from zoneinfo time zone database.
+
+            This time zone is a default for this user, client systems might however choose to use another time zones for interaction with the HsM system.
+          example: Europe/Vienna
+        createdAt:
+          type: string
+          format: date-time
+          example: '2021-08-23T16:15:18.123+01:00'
+          readOnly: true
+        latestUpdatedAt:
+          type: string
+          description: 'Describes when the user was last modified within HsM. '
+          format: date-time
+          example: '2021-08-23T16:15:18.123+01:00'
+          readOnly: true
+        synchronizationId:
+          type: string
+          format: uuid
+          description: ID of the user in an external system.
+        synchronizationInformation:
+          type: string
+          description: A JSON document that can be used by synchronization processes to store synchronization information with this user. The schema of the JSON document is defined by the external synchronization process.
+        externallyManaged:
+          type: boolean
+          default: false
+          description: 'If true this resource is exernally managed, the possibilities to modify the resource in HsM is then limited.'
+        userCapabilityLevel:
+          type: integer
+          minimum: 1
+          maximum: 10
+      required:
+        - id
+        - givenName
+        - emailAddress
+        - createdAt
+        - latestUpdatedAt
+        - externallyManaged
     userStatus:
       type: string
       title: ''
