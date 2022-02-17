@@ -1126,7 +1126,8 @@ paths:
   /roles:
     get:
       summary: /roles GET
-      tags: []
+      tags:
+        - System
       responses:
         '200':
           description: OK
