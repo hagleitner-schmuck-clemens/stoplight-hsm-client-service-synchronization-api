@@ -1096,7 +1096,7 @@ paths:
       tags:
         - RoleAssignments
     delete:
-      summary: '/system/role-assignments/{id} DELETE'
+      summary: '/system-role-assignments/{id} DELETE'
       operationId: system-role-assignment#delete
       responses:
         '204':
