@@ -1002,26 +1002,6 @@ paths:
         - $ref: '#/components/parameters/pageSize'
         - $ref: '#/components/parameters/pageNumber'
         - schema:
-            type: string
-            format: uuid
-            example: 98aea202-354b-4912-81f7-364e609fe650
-          in: query
-          name: synchronizationId
-          description: Filters for a customer with the given synchronization ID. Only a customer with an exact match will pass the filter.
-        - schema:
-            type: string
-            example: '2021-11-12T21:15:13.1234+01:00'
-          in: query
-          name: latestUpdatedAfter
-          description: Filters for customers  that were last updated in the system after (>) the given date.
-        - schema:
-            type: string
-            example: '2021-11-12T21:15:13.1234+01:00'
-            format: date-time
-          in: query
-          name: createdBefore
-          description: 'Filters for customers  that were created in the system before (<) the given date. '
-        - schema:
             type: boolean
           in: query
           name: synchronizationIdAvailable
@@ -1033,8 +1013,16 @@ paths:
       summary: /items POST
       operationId: items#post
       responses:
-        '200':
-          description: OK
+        '201':
+          description: Created
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
   '/items/{id}':
     parameters:
       - $ref: '#/components/parameters/id'
@@ -1059,6 +1047,20 @@ paths:
       responses:
         '200':
           description: OK
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/item'
+      description: Updates an item.
   /system-role-assignments:
     parameters: []
     get:
@@ -1283,10 +1285,6 @@ paths:
         - schema:
             type: string
             example: 'active,inactive'
-            enum:
-              - active
-              - inactive
-              - deleted
           in: query
           name: status
           description: Filters users based on user status. If given only users one of the given status will pass the filter.
@@ -1779,6 +1777,36 @@ components:
       properties:
         id:
           type: integer
+          description: ID of the item within the HsM system
+          readOnly: true
+        itemNumber:
+          type: string
+          description: A unique string identifying the item
+        name:
+          type: string
+          description: Name of the item
+        description:
+          type: string
+          description: Description of the item
+        customerId:
+          type: string
+          description: ID of the customer this item belongs to. Can be an internal HsM ID or a synchronization ID.
+          writeOnly: true
+        customerSynchronizationId:
+          type: string
+          format: uuid
+          description: Synchronization ID of the customer this item belongs to.
+          readOnly: true
+        status:
+          type: string
+          enum:
+            - Active
+            - Deleted
+          description: Life-cycle status of the item
+        canBeAssignedToLocation:
+          type: boolean
+          description: Can be assigned to a location in HsM
+          default: false
         synchronizationId:
           type: string
           format: uuid
@@ -1786,39 +1814,10 @@ components:
         synchronizationInformation:
           type: string
           description: A JSON document that can be used by synchronization processes to store synchronization information with this user. The schema of the JSON document is defined by the external synchronization process.
-        createdAt:
-          type: string
-          format: date-time
-          example: '2021-08-23T16:15:18.123+01:00'
-          readOnly: true
-        latestUpdatedAt:
-          type: string
-          description: 'Describes when the user was last modified within HsM. '
-          format: date-time
-          example: '2021-08-23T16:15:18.123+01:00'
-          readOnly: true
         externallyManaged:
           type: boolean
           default: false
           description: 'If true this resource is exernally managed, the possibilities to modify the resource in HsM is then limited.'
-        itemNumber:
-          type: string
-        description1:
-          type: string
-        description2:
-          type: string
-        customerId:
-          type: integer
-        status:
-          type: string
-          enum:
-            - Active
-            - Deleted
-        mountable:
-          type: boolean
-        customerSynchronizationId:
-          type: string
-          format: uuid
     customerRoleAssignment:
       title: ''
       type: object
