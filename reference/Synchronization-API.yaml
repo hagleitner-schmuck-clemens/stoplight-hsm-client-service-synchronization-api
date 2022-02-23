@@ -1001,6 +1001,31 @@ paths:
       parameters:
         - $ref: '#/components/parameters/pageSize'
         - $ref: '#/components/parameters/pageNumber'
+        - schema:
+            type: string
+            format: uuid
+            example: 98aea202-354b-4912-81f7-364e609fe650
+          in: query
+          name: synchronizationId
+          description: Filters for a customer with the given synchronization ID. Only a customer with an exact match will pass the filter.
+        - schema:
+            type: string
+            example: '2021-11-12T21:15:13.1234+01:00'
+          in: query
+          name: latestUpdatedAfter
+          description: Filters for customers  that were last updated in the system after (>) the given date.
+        - schema:
+            type: string
+            example: '2021-11-12T21:15:13.1234+01:00'
+            format: date-time
+          in: query
+          name: createdBefore
+          description: 'Filters for customers  that were created in the system before (<) the given date. '
+        - schema:
+            type: boolean
+          in: query
+          name: synchronizationIdAvailable
+          description: 'Filters for customers based on the availability of a synchronizationId. If set to true only users with a non-empty synchronizationId will pass the filter, if set to false only users with an empty synchronizationId will pass the filter.  '
       x-internal: false
       tags:
         - Items
@@ -1753,7 +1778,47 @@ components:
       type: object
       properties:
         id:
+          type: integer
+        synchronizationId:
           type: string
+          format: uuid
+          description: ID of the user in an external system.
+        synchronizationInformation:
+          type: string
+          description: A JSON document that can be used by synchronization processes to store synchronization information with this user. The schema of the JSON document is defined by the external synchronization process.
+        createdAt:
+          type: string
+          format: date-time
+          example: '2021-08-23T16:15:18.123+01:00'
+          readOnly: true
+        latestUpdatedAt:
+          type: string
+          description: 'Describes when the user was last modified within HsM. '
+          format: date-time
+          example: '2021-08-23T16:15:18.123+01:00'
+          readOnly: true
+        externallyManaged:
+          type: boolean
+          default: false
+          description: 'If true this resource is exernally managed, the possibilities to modify the resource in HsM is then limited.'
+        itemNumber:
+          type: string
+        description1:
+          type: string
+        description2:
+          type: string
+        customerId:
+          type: integer
+        status:
+          type: string
+          enum:
+            - Active
+            - Deleted
+        mountable:
+          type: boolean
+        customerSynchronizationId:
+          type: string
+          format: uuid
     customerRoleAssignment:
       title: ''
       type: object
