@@ -27,8 +27,9 @@ info:
 servers:
   - url: 'http://localhost:3000'
 tags:
-  - name: Customers
   - name: CustomerRelations
+  - name: Customers
+  - name: Items
   - name: RoleAssignments
   - name: System
   - name: Users
@@ -979,6 +980,60 @@ paths:
       description: Gets a role-assignemnt of a user on a customer.
       parameters: []
       x-internal: false
+  /items:
+    parameters: []
+    get:
+      summary: /items GET
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  '':
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/item'
+      operationId: items#get
+      description: Get all items.
+      parameters:
+        - $ref: '#/components/parameters/pageSize'
+        - $ref: '#/components/parameters/pageNumber'
+      x-internal: false
+      tags:
+        - Items
+    post:
+      summary: /items POST
+      operationId: items#post
+      responses:
+        '200':
+          description: OK
+  '/items/{id}':
+    parameters:
+      - $ref: '#/components/parameters/id'
+    get:
+      summary: /items GET
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/item'
+      operationId: item#get
+      description: Gel all items
+      parameters: []
+      x-internal: false
+      tags:
+        - Items
+    put:
+      summary: '/items/{id} PUT'
+      operationId: item#put
+      responses:
+        '200':
+          description: OK
   /system-role-assignments:
     parameters: []
     get:
@@ -1693,6 +1748,12 @@ components:
         - parentId
         - childId
         - externallyManaged
+    item:
+      title: item
+      type: object
+      properties:
+        id:
+          type: string
     customerRoleAssignment:
       title: ''
       type: object
