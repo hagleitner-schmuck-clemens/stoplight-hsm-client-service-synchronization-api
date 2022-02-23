@@ -1023,6 +1023,11 @@ paths:
           description: Forbidden
         '404':
           description: Not Found
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/item'
   '/items/{id}':
     parameters:
       - $ref: '#/components/parameters/id'
