@@ -1007,10 +1007,10 @@ paths:
           name: synchronizationIdAvailable
           description: 'Filters for customers based on the availability of a synchronizationId. If set to true only users with a non-empty synchronizationId will pass the filter, if set to false only users with an empty synchronizationId will pass the filter.  '
         - schema:
-            type: string
+            type: array
           in: query
           name: status
-          description: Filters items according to their status.  Accepts a comma separated list of status.
+          description: 'Filters items according to their status.  '
         - schema:
             type: string
           in: query
