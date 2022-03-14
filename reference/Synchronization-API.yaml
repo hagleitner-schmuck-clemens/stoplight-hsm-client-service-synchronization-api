@@ -846,15 +846,6 @@ paths:
       responses:
         '200':
           description: OK
-          content:
-            application/json:
-              schema:
-                type: string
-                required: true
-                enum:
-                  - active
-                  - inactive
-                  - deleted
         '400':
           description: Bad Request
           content:
@@ -871,6 +862,8 @@ paths:
                 $ref: '#/components/schemas/response-403-forbidden'
         '404':
           description: Not Found
+        '500':
+          description: Internal Server Error
       description: Modifies the life-cylce status of a customer.
       requestBody:
         content:
