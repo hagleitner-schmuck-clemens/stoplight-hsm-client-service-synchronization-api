@@ -27,6 +27,7 @@ info:
 servers:
   - url: 'http://localhost:3000'
 tags:
+  - name: Capabilities
   - name: CustomerRelations
   - name: Customers
   - name: Items
@@ -1307,6 +1308,70 @@ paths:
           description: Forbidden
       operationId: get-roles
       description: 'Gets all defined roles in HsM. '
+  /user-capabilities:
+    patch:
+      summary: /user-capabilities PATCH
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    userId:
+                      type: integer
+                    success:
+                      type: boolean
+                  required:
+                    - userId
+                    - success
+      operationId: patch-user-capabilities
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userids:
+                  type: array
+                  description: |
+                    IDs of the users can be the internal HsM integer Id or a synchronization ID.
+                  items:
+                    type: string
+                capabilities:
+                  type: array
+                  description: The capabilities to be granted
+                  items:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        description: The unique code of the capability.
+                      externallyManaged:
+                        type: boolean
+                    required:
+                      - code
+                      - externallyManaged
+                capabilitiesToBeRemoved:
+                  type: string
+                  enum:
+                    - NonIncluded
+                    - NonIncludedExternallyManaged
+                    - None
+                  description: Defines if capabilities not granted with this call shall be removed.
+              required:
+                - userids
+                - capabilities
+                - capabilitiesToBeRemoved
+      description: |-
+        This is a batch endpoint that updates the capabilities assigned to users. Each passed user will be granted the given capabilities. Capabilities not given in the request object will be removed from each user, depending on the capabilitieToBeRemoved setting.
+
+        This endpoint assumes that usually you will set the same set of capabilities for a a number of users.
+      tags:
+        - Capabilities
   /users:
     parameters: []
     get:
