@@ -1323,11 +1323,23 @@ paths:
                   properties:
                     userId:
                       type: integer
-                    success:
-                      type: boolean
+                    errorCode:
+                      type: string
                   required:
                     - userId
-                    - success
+                    - errorCode
+        '207':
+          description: Multi-Status (WebDAV)
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
       operationId: patch-user-capabilities
       requestBody:
         content:
