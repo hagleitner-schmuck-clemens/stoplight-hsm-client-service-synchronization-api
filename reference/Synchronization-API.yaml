@@ -1369,7 +1369,7 @@ paths:
                   description: An array of user IDs. Can be internal HsM IDs (integer) or synchronization IDs (UUIDs)
                   items:
                     type: string
-                capabilityGrants:
+                availabilityCapabilityGrants:
                   type: array
                   description: An array of capabilities that shall be granted to each user.
                   items:
@@ -1378,11 +1378,18 @@ paths:
                       code:
                         type: string
                         description: The unique code of the capability
-                      externallyManaged:
+                      availabilityLevel:
                         type: string
+                        enum:
+                          - Available
+                          - Disabled
+                          - Hidden
+                      externallyManaged:
+                        type: boolean
                         description: If set to true this capability grant cannot be modified from within HsM.
                     required:
                       - code
+                      - availabilityLevel
                       - externallyManaged
                 capabilityRemovalMode:
                   type: string
@@ -1393,7 +1400,7 @@ paths:
                     - RemoveAny
               required:
                 - userIds
-                - capabilityGrants
+                - availabilityCapabilityGrants
                 - capabilityRemovalMode
         description: This request body defines which capabilities shall be granted to all users in the `userIds` array.
       tags:
