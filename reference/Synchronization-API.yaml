@@ -1384,6 +1384,76 @@ paths:
         This endpoint assumes that usually you will set the same set of capabilities for a a number of users.
       tags:
         - Capabilities
+    put:
+      summary: /user-capabilities PUT
+      operationId: user-capabilities#put
+      responses:
+        '207':
+          description: Multi-Status (WebDAV)
+          content:
+            application/json:
+              schema:
+                type: object
+                description: This return object includes the users on which granting of the capabilities failed.
+                properties:
+                  failedGrants:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        userId:
+                          type: string
+                          description: The id of the user as given in the request object (i.e. either a integer or a UUID)
+                      required:
+                        - userId
+                required:
+                  - failedGrants
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      description: 'This is a batch endpoint that updates the capabilities assigned to users. Each passed user will be granted the given capabilities. Capabilities not given in the request object will be removed from each user, depending on the capabilitieToBeRemoved setting.'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userIds:
+                  type: array
+                  description: An array of user IDs. Can be internal HsM IDs (integer) or synchronization IDs (UUIDs)
+                  items:
+                    type: string
+                capabilityGrants:
+                  type: array
+                  description: An array of capabilities that shall be granted to each user.
+                  items:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        description: The unique code of the capability
+                      externallyManaged:
+                        type: string
+                        description: If set to true this capability grant cannot be modified from within HsM.
+                    required:
+                      - code
+                      - externallyManaged
+                capabilityRemovalMode:
+                  type: string
+                  description: Defines how the operation handles capabilities granted to users in the Backend but not given with the call of this operation.
+                  enum:
+                    - NoRemoval
+                    - RemoveExternallyManaged
+                    - RemoveAny
+              required:
+                - userIds
+                - capabilityGrants
+                - capabilityRemovalMode
   /users:
     parameters: []
     get:
