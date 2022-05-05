@@ -27,6 +27,7 @@ info:
 servers:
   - url: 'http://localhost:3000'
 tags:
+  - name: Capabilities
   - name: CustomerRelations
   - name: Customers
   - name: Items
@@ -1306,6 +1307,92 @@ paths:
           description: Forbidden
       operationId: get-roles
       description: 'Gets all defined roles in HsM. '
+  /user-capabilities:
+    put:
+      summary: /user-capabilities PUT
+      operationId: user-capabilities#put
+      responses:
+        '207':
+          description: Multi-Status (WebDAV)
+          content:
+            application/json:
+              schema:
+                type: object
+                description: This return object includes the users on which granting of the capabilities failed.
+                properties:
+                  failedGrants:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        userId:
+                          type: integer
+                          description: The id of the user as given in the request object (i.e. either a integer or a UUID)
+                        userSynchronizationId:
+                          type: string
+                          format: uuid
+                          description: The synchronizationId (if available)
+                        errorCode:
+                          type: string
+                          description: A error code identifying why the operation failed for this user.
+                      required:
+                        - userId
+                        - errorCode
+                required:
+                  - failedGrants
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      description: |
+        This is a batch endpoint that updates the capabilities assigned to users. Each passed user will be granted the given capabilities. Depending on the value set for `capabilityRemovalMode` capabilites that are granted to a user in the backend but are not part of the request will be removed:
+        * `NoRemoval`: No capability grants will be removed
+        * `RemoveExternallyManaged`: Capabilities that are granted to a user in the backend and are not part of this request will be removed if that capability grant is marked as externally managed.
+        * `RemoveAny`: Any capabilit grants in the backend and that not part of this request will be removed.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userIds:
+                  type: array
+                  description: An array of user IDs. Can be internal HsM IDs (integer) or synchronization IDs (UUIDs)
+                  items:
+                    type: string
+                capabilityGrants:
+                  type: array
+                  description: An array of capabilities that shall be granted to each user.
+                  items:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        description: The unique code of the capability
+                      externallyManaged:
+                        type: string
+                        description: If set to true this capability grant cannot be modified from within HsM.
+                    required:
+                      - code
+                      - externallyManaged
+                capabilityRemovalMode:
+                  type: string
+                  description: Defines how the operation handles capabilities granted to users in the Backend but not given with the call of this operation.
+                  enum:
+                    - NoRemoval
+                    - RemoveExternallyManaged
+                    - RemoveAny
+              required:
+                - userIds
+                - capabilityGrants
+                - capabilityRemovalMode
+        description: This request body defines which capabilities shall be granted to all users in the `userIds` array.
+      tags:
+        - Capabilities
   /users:
     parameters: []
     get:
