@@ -1039,6 +1039,8 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/item'
+      tags:
+        - Items
   '/items/{id}':
     parameters:
       - $ref: '#/components/parameters/id'
@@ -1142,6 +1144,8 @@ paths:
                 - Active
                 - Deleted
       description: Sets the life-cycle status of an item.
+      tags:
+        - Items
   /system-role-assignments:
     parameters: []
     get:
@@ -1379,6 +1383,8 @@ paths:
                 - userIds
                 - capabilityGrants
                 - capabilityRemovalMode
+      tags:
+        - Capabilities
   /users:
     parameters: []
     get:
