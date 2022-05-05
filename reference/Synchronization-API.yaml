@@ -1354,7 +1354,7 @@ paths:
         '404':
           description: Not Found
       description: |
-        This is a batch endpoint that updates the capabilities assigned to users. Each passed user will be granted the given capabilities. Depending on the value set for `capabilitieyRemovalMode` capabilites that are granted to a user in the backend but are not part of the request will be removed:
+        This is a batch endpoint that updates the capabilities assigned to users. Each passed user will be granted the given capabilities. Depending on the value set for `capabilityRemovalMode` capabilites that are granted to a user in the backend but are not part of the request will be removed:
         * `NoRemoval`: No capability grants will be removed
         * `RemoveExternallyManaged`: Capabilities that are granted to a user in the backend and are not part of this request will be removed if that capability grant is marked as externally managed.
         * `RemoveAny`: Any capabilit grants in the backend and that not part of this request will be removed.
