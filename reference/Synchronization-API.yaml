@@ -1331,8 +1331,11 @@ paths:
                       type: object
                       properties:
                         userId:
-                          type: string
+                          type: integer
                           description: The id of the user as given in the request object (i.e. either a integer or a UUID)
+                        userSynchronizationId:
+                          type: string
+                          format: uuid
                       required:
                         - userId
                 required:
