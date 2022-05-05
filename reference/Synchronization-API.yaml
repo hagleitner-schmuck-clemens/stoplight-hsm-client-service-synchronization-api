@@ -1336,8 +1336,13 @@ paths:
                         userSynchronizationId:
                           type: string
                           format: uuid
+                          description: The synchronizationId (if available)
+                        errorCode:
+                          type: string
+                          description: A error code identifying why the operation failed for this user.
                       required:
                         - userId
+                        - errorCode
                 required:
                   - failedGrants
         '400':
